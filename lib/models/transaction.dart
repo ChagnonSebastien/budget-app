@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/utils.dart';
@@ -10,20 +7,20 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class Transaction with UniqueID {
 
   Transaction({
-    required this.name,
     required this.amount,
     required this.from,
     required this.to,
     required this.date,
     required this.category,
+    this.note,
   });
 
-  String name;
   int amount;
   Account from;
   Account to;
   DateTime date;
   Category category;
+  String? note;
 }
 
 
@@ -38,7 +35,7 @@ class TransactionManager extends StateNotifier<List<Transaction>> {
   }
 
   void reorder() {
-    state.sort((a, b) => b.date.compareTo(a.date));
+    state.sort((a, b) => a.date.compareTo(b.date));
     state = [...state];
   }
 
@@ -46,101 +43,40 @@ class TransactionManager extends StateNotifier<List<Transaction>> {
 }
 
 
-final transactionsNotifierProvider = StateNotifierProvider<TransactionManager, List<Transaction>>((ref) {
+final transactionsProvider = StateNotifierProvider<TransactionManager, List<Transaction>>((ref) {
   var initialTransactions = [
     Transaction(
-      name: 'Coffee',
       amount: 325,
       from: wallet,
       to: starbucks,
-      date: DateTime.now(),
+      date: DateTime.now().subtract(const Duration(days: 3)),
       category: fastFood,
+      note: 'Coffee',
     ),
     Transaction(
-      name: 'Bagels',
-      amount: 1020,
-      from: wallet,
-      to: viateurBagel,
-      date: DateTime(2023, 09, 11),
+      amount: 14689,
+      from: checking,
+      to: maxi,
+      date: DateTime.now().subtract(const Duration(days: 3)),
       category: groceries,
+    ),
+    Transaction(
+      amount: 325,
+      from: wallet,
+      to: randolph,
+      date: DateTime.now().subtract(const Duration(days: 1)),
+      category: goingOut,
+      note: 'Fete de Pierre',
+    ),
+    Transaction(
+      amount: 1020,
+      from: checking,
+      to: viateurBagel,
+      date: DateTime.now(),
+      category: groceries,
+      note: 'Bagels',
     ),
   ];
   return TransactionManager(initialTransactions);
 });
 
-
-
-
-
-class TransactionCard extends StatelessWidget  {
-  const TransactionCard({
-    super.key,
-    required this.transaction,
-    this.textSize = 11,
-  });
-  
-  final Transaction transaction;
-  final double textSize;
-
-  @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Icon(
-              transaction.category.iconData,
-              color: transaction.category.iconColor,
-              size: textSize * 2.8,
-            ),
-          ),
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                transaction.name,
-                style: TextStyle(fontSize: textSize, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                '\$ ${(transaction.amount / pow(10, transaction.from.currency.decimals)).toStringAsFixed(transaction.from.currency.decimals)}',
-                style: TextStyle(fontSize: textSize),
-              ),
-            ],
-          )),
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'From: ',
-                  style: TextStyle(fontSize: textSize),
-                ),
-                Text(
-                  'To: ',
-                  style: TextStyle(fontSize: textSize),
-                ),
-              ],
-            ),
-          ),
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                transaction.from.name,
-                style: TextStyle(fontSize: textSize),
-              ),
-              Text(
-                transaction.to.name,
-                style: TextStyle(fontSize: textSize),
-              ),
-            ],
-          )),
-        ],
-      ),
-    ),
-  );
-}

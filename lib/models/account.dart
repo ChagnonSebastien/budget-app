@@ -31,6 +31,8 @@ final Account wallet = Account(name: 'Wallet', currency: cad, initialAmount: 100
 final Account checking = Account(name: 'Checking Account', currency: cad, initialAmount: 2000, personal: true);
 final Account viateurBagel = Account(name: "Viateur Bagel", currency: wallet.currency);
 final Account starbucks = Account(name: "Starbucks", currency: wallet.currency);
+final Account randolph = Account(name: "Randolph", currency: wallet.currency);
+final Account maxi = Account(name: "Maxi", currency: wallet.currency);
 
 
 class AccountManager extends StateNotifier<List<Account>> {

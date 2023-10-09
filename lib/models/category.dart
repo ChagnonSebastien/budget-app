@@ -17,7 +17,7 @@ class Category {
 
 Category food = const Category(
   name: 'Food',
-  iconData: Icons.apple,
+  iconData: Icons.kitchen,
   iconColor: Color.fromARGB(255, 175, 74, 28),
 );
 
@@ -30,8 +30,15 @@ Category groceries = Category(
 
 Category fastFood = Category(
   parent: food,
-  name: 'Takeout',
+  name: 'Fast food',
   iconData: Icons.fastfood,
+  iconColor: const Color.fromARGB(255, 175, 74, 28),
+);
+
+Category goingOut = Category(
+  parent: food,
+  name: 'Restaurant',
+  iconData: Icons.restaurant,
   iconColor: const Color.fromARGB(255, 175, 74, 28),
 );
 

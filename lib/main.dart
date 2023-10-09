@@ -14,8 +14,6 @@ class BudgetApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
 
-    final selectedPageIndex = useState(0);
-
     return MaterialApp(
       title: 'Budget App',
       theme: ThemeData(

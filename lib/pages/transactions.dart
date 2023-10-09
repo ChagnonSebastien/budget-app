@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
+import 'package:flutter_hello_world/widgets/edit_transaction.dart';
+import 'package:flutter_hello_world/widgets/transaction_card.dart';
 import 'package:flutter_hello_world/utils.dart';
-import 'package:flutter_hello_world/widgets/new_transaction.dart';
+import 'package:flutter_hello_world/pages/new_transaction.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MyTransactions extends ConsumerWidget {
@@ -13,15 +15,15 @@ class MyTransactions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transactionsNotifier = ref.watch(transactionsNotifierProvider.notifier);
-    final transactions = ref.watch(transactionsNotifierProvider);
+    final transactionsNotifier = ref.watch(transactionsProvider.notifier);
+    final transactions = ref.watch(transactionsProvider);
 
     List<Widget> items = [];
     List<DateTime> itemDates = [];
     DateTime? lastDay;
 
 
-    for (Transaction t in transactions) {
+    for (Transaction t in transactions.reversed) {
       bool newDay = lastDay == null || !sameDay(t.date, lastDay);
       if (newDay) {
         DateTime currentDate = DateTime(t.date.year, t.date.month, t.date.day);
@@ -41,7 +43,7 @@ class MyTransactions extends ConsumerWidget {
       
       items.add(TransactionCard(
         key: Key(t.id),
-        transaction: t
+        transaction: t,
       ));
       itemDates.add(t.date);
     }
@@ -83,13 +85,8 @@ class MyTransactions extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return NewTransaction(
+            return const NewTransaction(
               transactionType: TransactionType.expense,
-              commit: (transaction) {
-                transactionsNotifier.newTransaction(transaction);
-                transactionsNotifier.reorder();
-                Navigator.pop(context);
-              },
             );
           }));
         },
