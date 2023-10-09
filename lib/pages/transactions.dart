@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hello_world/new_transaction.dart';
-import 'package:flutter_hello_world/transaction.dart';
+import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/utils.dart';
+import 'package:flutter_hello_world/widgets/new_transaction.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MyTransactions extends ConsumerWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hello_world/accounts.dart';
-import 'package:flutter_hello_world/transactions.dart';
+import 'package:flutter_hello_world/pages/accounts.dart';
+import 'package:flutter_hello_world/pages/transactions.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 

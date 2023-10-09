@@ -5,8 +5,6 @@ mixin UniqueID {
   final String id = const Uuid().v4();
 }
 
-
-
 bool sameDay(DateTime a, DateTime b) {
   if (a.year != b.year) return false;
   if (a.month != b.month) return false;
