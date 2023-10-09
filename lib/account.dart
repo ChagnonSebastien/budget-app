@@ -18,16 +18,17 @@ class Account with UniqueID {
     required this.name,
     required this.currency,
     this.initialAmount = 0,
-    this.personnal = false,
+    this.personal = false,
   });
 
   String name;
   double initialAmount;
   final Currency currency;
-  bool personnal;
+  bool personal;
 }
 
-final Account wallet = Account(name: 'Wallet', currency: cad, initialAmount: 1000, personnal: true);
+final Account wallet = Account(name: 'Wallet', currency: cad, initialAmount: 100, personal: true);
+final Account checking = Account(name: 'Checking Account', currency: cad, initialAmount: 2000, personal: true);
 final Account viateurBagel = Account(name: "Viateur Bagel", currency: wallet.currency);
 final Account starbucks = Account(name: "Starbucks", currency: wallet.currency);
 
@@ -38,9 +39,7 @@ class AccountManager extends StateNotifier<List<Account>> {
   Account? get(String name) =>  state.where((element) => element.name == name).firstOrNull;
 
   bool add(Account newAccount) {
-    Account? existingAccount = get(newAccount.name);
-
-    if (existingAccount != null) {
+    if (get(newAccount.name) != null) {
       return false;
     }
 
@@ -58,15 +57,15 @@ class AccountManager extends StateNotifier<List<Account>> {
 
 
 final accountsProvider = StateNotifierProvider<AccountManager, List<Account>>((ref) {
-  return AccountManager([wallet, viateurBagel, starbucks]);
+  return AccountManager([wallet, viateurBagel, starbucks, checking]);
 });
 
 
 final myAccountNamesProvider = Provider<List<String>>((ref) {
-  return ref.watch(accountsProvider).where((a) => a.personnal).map((a) => a.name).toList();
+  return ref.watch(accountsProvider).where((a) => a.personal).map((a) => a.name).toList();
 });
 
 
 final otherAccountNamesProvider = Provider<List<String>>((ref) {
-  return ref.watch(accountsProvider).where((a) => !a.personnal).map((a) => a.name).toList();
+  return ref.watch(accountsProvider).where((a) => !a.personal).map((a) => a.name).toList();
 });

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/account.dart';
+import 'package:flutter_hello_world/category.dart';
 import 'package:flutter_hello_world/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -14,6 +15,7 @@ class Transaction with UniqueID {
     required this.from,
     required this.to,
     required this.date,
+    required this.category,
   });
 
   String name;
@@ -21,6 +23,7 @@ class Transaction with UniqueID {
   Account from;
   Account to;
   DateTime date;
+  Category category;
 }
 
 
@@ -38,9 +41,12 @@ class TransactionManager extends StateNotifier<List<Transaction>> {
     state.sort((a, b) => b.date.compareTo(a.date));
     state = [...state];
   }
+
+
 }
 
-final transactionsProvider = StateNotifierProvider<TransactionManager, List<Transaction>>((ref) {
+
+final transactionsNotifierProvider = StateNotifierProvider<TransactionManager, List<Transaction>>((ref) {
   var initialTransactions = [
     Transaction(
       name: 'Coffee',
@@ -48,6 +54,7 @@ final transactionsProvider = StateNotifierProvider<TransactionManager, List<Tran
       from: wallet,
       to: starbucks,
       date: DateTime.now(),
+      category: fastFood,
     ),
     Transaction(
       name: 'Bagels',
@@ -55,6 +62,7 @@ final transactionsProvider = StateNotifierProvider<TransactionManager, List<Tran
       from: wallet,
       to: viateurBagel,
       date: DateTime(2023, 09, 11),
+      category: groceries,
     ),
   ];
   return TransactionManager(initialTransactions);
@@ -83,17 +91,21 @@ class TransactionCard extends StatelessWidget  {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: Icon(Icons.sports_baseball, size: textSize * 2.8),
+            child: Icon(
+              transaction.category.iconData,
+              color: transaction.category.iconColor,
+              size: textSize * 2.8,
+            ),
           ),
           Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '\$ ${(transaction.amount / pow(10, transaction.from.currency.decimals)).toStringAsFixed(transaction.from.currency.decimals)}',
-                style: TextStyle(fontSize: textSize),
+                transaction.name,
+                style: TextStyle(fontSize: textSize, fontWeight: FontWeight.w700),
               ),
               Text(
-                transaction.name,
+                '\$ ${(transaction.amount / pow(10, transaction.from.currency.decimals)).toStringAsFixed(transaction.from.currency.decimals)}',
                 style: TextStyle(fontSize: textSize),
               ),
             ],
