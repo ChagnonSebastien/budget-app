@@ -36,7 +36,7 @@ class EditTransaction extends HookConsumerWidget {
   
   final _fromAccountController = TextEditingController(text: '');
   final _toAccountController = TextEditingController(text: '');
-  final _dateController = TextEditingController(text: format(DateTime.now()));
+  final _dateController = TextEditingController(text: DateTime.now().toDate());
 
 
   @override
@@ -177,7 +177,6 @@ class EditTransaction extends HookConsumerWidget {
             ),
             // Date Field
             TextFormField(
-              initialValue: '',
               decoration: const InputDecoration(
                 label: Text('Date'),
               ),
@@ -191,7 +190,7 @@ class EditTransaction extends HookConsumerWidget {
                   lastDate: DateTime.now(),
                 ).then((value) {
                   if (value != null) {
-                    _dateController.text = format(value);
+                    _dateController.text = value.toDate();
                     var now = DateTime.now();
                     date.value = value.add(Duration(hours: now.hour, minutes: now.minute, seconds: now.second));
                   }

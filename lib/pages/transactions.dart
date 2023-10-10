@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
@@ -33,7 +32,7 @@ class MyTransactions extends ConsumerWidget {
           },
           key: Key(t.date.toIso8601String()),
           child: Text(
-            format(currentDate),
+            currentDate.toDate(),
             textAlign: TextAlign.center,
           ),
         ));
@@ -53,17 +52,6 @@ class MyTransactions extends ConsumerWidget {
       key: scaffoldKey,
       body: ReorderableListView(
         padding: const EdgeInsets.all(10),
-        proxyDecorator: (Widget child, int _, Animation<double> animation) {
-          return AnimatedBuilder(
-            animation: animation,
-            builder: (BuildContext context, Widget? child) {
-              final double animValue = Curves.easeInOut.transform(animation.value);
-              final double scale = lerpDouble(1, 1.02, animValue)!;
-              return Transform.scale(scale: scale, child: child);
-            },
-            child: child,
-          );
-        },
         shrinkWrap: true,
         children: items,
         onReorder: (oldIndex, newIndex) {

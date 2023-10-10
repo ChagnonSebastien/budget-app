@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 
 mixin UniqueID {
@@ -12,11 +16,28 @@ bool sameDay(DateTime a, DateTime b) {
   return true;
 }
 
-String format(DateTime date) {
-  return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+extension DateFormatingExtension on DateTime {
+  String toDate() {
+    String s = DateFormat.yMMMMd().format(this);
+    return s;
+  }
 }
 
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
   String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+}
+
+
+Widget dragDecorator(Widget child, int _, Animation<double> animation) {
+  return AnimatedBuilder(
+    animation: animation,
+    builder: (BuildContext context, Widget? child) {
+      final double animValue = Curves.easeInOut.transform(animation.value);
+      final double scale = lerpDouble(1, 1.02, animValue)!;
+      return Transform.scale(scale: scale, child: child);
+    },
+    child: child,
+  );
 }

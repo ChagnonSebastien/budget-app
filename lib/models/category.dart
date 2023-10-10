@@ -17,7 +17,7 @@ class Category {
 
 Category food = const Category(
   name: 'Food',
-  iconData: Icons.kitchen,
+  iconData: Icons.dinner_dining,
   iconColor: Color.fromARGB(255, 175, 74, 28),
 );
 
