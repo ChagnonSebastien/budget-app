@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_hello_world/pages/accounts.dart';
+import 'package:flutter_hello_world/pages/categories.dart';
 import 'package:flutter_hello_world/pages/transactions.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -30,6 +32,12 @@ var pages = [
     icon: const Icon(Icons.account_balance_outlined),
     selectedIcon: const Icon(Icons.account_balance),
     widget: () => MyAccounts(),
+  ),
+  Page(
+    name: 'Categories',
+    icon: const Icon(Icons.category_outlined),
+    selectedIcon: const Icon(Icons.category),
+    widget: () => MyCategories(),
   ),
 ];
 

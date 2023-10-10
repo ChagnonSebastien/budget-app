@@ -52,18 +52,21 @@ class MyTransactions extends ConsumerWidget {
       key: scaffoldKey,
       body: ReorderableListView(
         padding: const EdgeInsets.all(10),
+        proxyDecorator: dragDecorator,
         shrinkWrap: true,
         children: items,
         onReorder: (oldIndex, newIndex) {
           final Widget movedCard = items[oldIndex];
           if (movedCard is! TransactionCard) return;
 
-          var beforeElementDate = newIndex == itemDates.length ? DateTime(itemDates[newIndex - 1].year, itemDates[newIndex - 1].month, itemDates[newIndex - 1].day) : itemDates[newIndex];
+          var previousDay = DateTime(itemDates[newIndex - 1].year, itemDates[newIndex - 1].month, itemDates[newIndex - 1].day);
+          var beforeElementDate = newIndex == itemDates.length ? previousDay : itemDates[newIndex];
           var afterElementDate = newIndex == 0 ? beforeElementDate.add(const Duration(days: 1)) : itemDates[newIndex - 1];
 
           if (!sameDay(beforeElementDate, afterElementDate.subtract(const Duration(seconds: 1)))) {
             beforeElementDate = DateTime(afterElementDate.year, afterElementDate.month, afterElementDate.day);
           }
+
           var newDate = beforeElementDate.add(Duration(microseconds: (afterElementDate.difference(beforeElementDate).inMicroseconds / 2).round()));
           movedCard.transaction.date = newDate;
 

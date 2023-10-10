@@ -75,7 +75,7 @@ class EditTransaction extends HookConsumerWidget {
           from: from,
           to: to,
           date: date.value,
-          category: food,
+          category: any,
         );
 
         commit(newTransaction);

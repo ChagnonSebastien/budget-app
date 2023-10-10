@@ -2,43 +2,52 @@ import 'package:flutter/material.dart';
 
 
 class Category {
-  const Category({
+  Category({
     required this.name,
     required this.iconData,
     required this.iconColor,
-    this.parent,
-  });
+    List<Category>? subCategories,
+  }) {
+    this.subCategories = subCategories ?? [];
+  }
 
   final String name;
   final IconData iconData;
   final Color iconColor;
-  final Category? parent;
+  late List<Category> subCategories;
 }
 
-Category food = const Category(
-  name: 'Food',
-  iconData: Icons.dinner_dining,
-  iconColor: Color.fromARGB(255, 175, 74, 28),
-);
 
 Category groceries = Category(
-  parent: food,
   name: 'Groceries',
   iconData: Icons.shopping_basket,
   iconColor: const Color.fromARGB(255, 175, 74, 28),
 );
 
 Category fastFood = Category(
-  parent: food,
   name: 'Fast food',
   iconData: Icons.fastfood,
   iconColor: const Color.fromARGB(255, 175, 74, 28),
 );
 
 Category goingOut = Category(
-  parent: food,
   name: 'Restaurant',
   iconData: Icons.restaurant,
   iconColor: const Color.fromARGB(255, 175, 74, 28),
 );
+
+Category food = Category(
+  name: 'Food',
+  iconData: Icons.dinner_dining,
+  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  subCategories: [groceries, fastFood, goingOut],
+);
+
+Category any = Category(
+  name: 'Any',
+  iconData: Icons.category,
+  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  subCategories: [food],
+);
+
 
