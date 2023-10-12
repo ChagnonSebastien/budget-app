@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Category {
   Category({
     required this.name,
-    required this.iconData,
+    required this.codepoint,
     required this.iconColor,
     List<Category>? subCategories,
   }) {
@@ -12,42 +15,81 @@ class Category {
   }
 
   final String name;
-  final IconData iconData;
+  final int codepoint;
   final Color iconColor;
   late List<Category> subCategories;
-}
 
+  get iconData {
+    return IconData(codepoint, fontFamily: 'MaterialIcons');
+  }
+
+  get icon {
+    return Icon(iconData, color: iconColor);
+  }
+}
 
 Category groceries = Category(
   name: 'Groceries',
-  iconData: Icons.shopping_basket,
-  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  codepoint: Icons.shopping_basket.codePoint,
+  iconColor: const Color.fromARGB(255, 215, 109, 61),
 );
 
 Category fastFood = Category(
   name: 'Fast food',
-  iconData: Icons.fastfood,
-  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  codepoint: Icons.fastfood.codePoint,
+  iconColor: const Color.fromARGB(255, 215, 109, 61),
 );
 
 Category goingOut = Category(
   name: 'Restaurant',
-  iconData: Icons.restaurant,
-  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  codepoint: Icons.restaurant.codePoint,
+  iconColor: const Color.fromARGB(255, 215, 109, 61),
 );
 
 Category food = Category(
   name: 'Food',
-  iconData: Icons.dinner_dining,
-  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  codepoint: Icons.dinner_dining.codePoint,
+  iconColor: const Color.fromARGB(255, 215, 109, 61),
   subCategories: [groceries, fastFood, goingOut],
 );
 
 Category any = Category(
   name: 'Any',
-  iconData: Icons.category,
-  iconColor: const Color.fromARGB(255, 175, 74, 28),
+  codepoint: Icons.category.codePoint,
+  iconColor: const Color.fromARGB(255, 215, 109, 61),
   subCategories: [food],
 );
 
+class CategoryManager extends StateNotifier<List<Category>> {
+  CategoryManager(List<Category>? initialCategories): super(initialCategories ?? [any]);
 
+  add(Category newCategory, Category parentCategory) {
+    parentCategory.subCategories.add(newCategory);
+    state = [...state, newCategory];
+  }
+
+}
+
+final categoriesProvider = StateNotifierProvider<CategoryManager, List<Category>>((ref) {
+  return CategoryManager([any, food, goingOut, fastFood, groceries]);
+});
+
+class ValidIcon {
+  ValidIcon({
+    required this.searchFields,
+    required this.codepoint,
+  });
+
+  final List<String> searchFields;
+  final int codepoint;
+}
+
+final materialIconData = FutureProvider<List<ValidIcon>>(((_) async {
+  String data = await rootBundle.loadString('assets/iconMetadata.json');
+  List<Map<String, dynamic>> icons = List<Map<String, dynamic>>.from(jsonDecode(data));
+  Iterable<ValidIcon> validIcons = icons.map((icon) => ValidIcon(
+        searchFields: List<String>.from(icon['tags']),
+        codepoint: int.parse(icon['codepoint'].substring(2), radix: 16),
+      ));
+  return validIcons.toList();
+}));

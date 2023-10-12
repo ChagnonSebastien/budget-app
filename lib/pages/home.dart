@@ -47,7 +47,7 @@ class Home extends HookWidget {
   @override
   Widget build(BuildContext context) {
 
-    final selectedPageIndex = useState(0);
+    final selectedPageIndex = useState(2);
 
     return Scaffold(
       appBar: AppBar(
