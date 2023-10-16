@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/utils.dart';
 import 'package:flutter_hello_world/widgets/category_tree.dart';
+import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
@@ -13,16 +14,27 @@ class NewCategory extends HookConsumerWidget {
 
   final _formKey = GlobalKey<FormState>();
 
-  final _textCategory = TextEditingController(text: any.name);
+  final _textCategory = TextEditingController(text: "");
   final _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final parentCategory = useState(any);
+    final categories = ref.watch(categoriesProvider);
+
+    if (!categories.hasValue) {
+      return Loading();
+    }
+
+    final parentCategory = useState(categories.value![rootCategoryUid]!);
+    useEffect(() {
+      _textCategory.text = parentCategory.value.name;
+      return null;
+    }, [parentCategory.value]);
+
     final codepoint = useState(Icons.auto_awesome.codePoint);
     final color = useState<Color>(Colors.orangeAccent);
 
-    final showCategorySelection = useCallback(() {
+    showCategorySelection() {
       showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -39,10 +51,8 @@ class NewCategory extends HookConsumerWidget {
                     endIndent: 20,
                     height: 0,
                   ),
-                  Expanded(child:
-                  CategoryTree(onCategoryTap: (tappedCategory) {
+                  Expanded(child: CategoryTree(onCategoryTap: (tappedCategory) {
                     parentCategory.value = tappedCategory;
-                    _textCategory.text = tappedCategory.name;
                     Navigator.pop(context);
                   })),
                 ],
@@ -51,9 +61,9 @@ class NewCategory extends HookConsumerWidget {
           );
         },
       );
-    });
+    };
 
-    final showIcons = useCallback(() async {
+    showIcons() async {
       showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -61,9 +71,11 @@ class NewCategory extends HookConsumerWidget {
             child: HookConsumer(
               builder: (context, ref, child) {
                 final iconFilter = useState("");
-                final validIcons = ref.watch(materialIconData);
+                final validIcons = ref.watch(materialIconDataProvider);
 
                 return validIcons.when<Widget>(
+                  error: (error, stackTrace) => const Text("Error"),
+                  loading: () => const Loading(),
                   data: (value) {
                     var filteredIcons = value.where((element) {
                       return element.searchFields.any((searchText) {
@@ -99,17 +111,15 @@ class NewCategory extends HookConsumerWidget {
                       ],
                     );
                   },
-                  error: (error, stackTrace) => const Text("Error"),
-                  loading: () => const Text('Loading'),
                 );
               },
             ),
           );
         },
       );
-    }, []);
+    };
 
-    final showColorPicker = useCallback(() {
+    showColorPicker() {
       showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -134,7 +144,7 @@ class NewCategory extends HookConsumerWidget {
           );
         },
       );
-    });
+    };
 
     void submit() {
       if (_formKey.currentState!.validate()) {
@@ -170,6 +180,7 @@ class NewCategory extends HookConsumerWidget {
                 decoration: const InputDecoration(
                   label: Text('Name'),
                 ),
+                autofocus: true,
                 controller: _nameController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -177,7 +188,10 @@ class NewCategory extends HookConsumerWidget {
                   }
                   if (ref
                       .read(categoriesProvider)
-                      .any((element) => element.name.toLowerCase() == value.toLowerCase())) {
+                      .value!
+                      .values
+                      .map<String>((value) => value.name)
+                      .contains(_nameController.text)) {
                     return 'This name already exists for another category';
                   }
                   return null;

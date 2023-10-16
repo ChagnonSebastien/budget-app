@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/category.dart';
+import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-
-class CategoryTree extends ConsumerWidget  {
+class CategoryTree extends HookConsumerWidget {
   const CategoryTree({
     super.key,
     required this.onCategoryTap,
@@ -13,14 +13,17 @@ class CategoryTree extends ConsumerWidget  {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var categories = ref.watch(categoriesProvider);
 
-    final categories = ref.watch(categoriesProvider);
+    if (!categories.hasValue) {
+      return Loading();
+    }
 
     List<Widget> view = [];
 
     void exploreCategory(Category category, int level) {
       view.add(ListTile(
-        contentPadding: EdgeInsets.only( left: level * 20, right: 20 ),
+        contentPadding: EdgeInsets.only(left: level * 20, right: 20),
         leading: category.icon,
         title: Text(category.name),
         onTap: () {
@@ -33,7 +36,9 @@ class CategoryTree extends ConsumerWidget  {
       }
     }
 
-    exploreCategory(categories[0], 1);
+    if (categories.hasValue) {
+      exploreCategory(categories.value![rootCategoryUid]!, 1);
+    }
 
     return ListView(
       shrinkWrap: true,

@@ -5,6 +5,7 @@ import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/utils.dart';
+import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -22,37 +23,42 @@ enum TransactionType {
   final bool mustBeToMine;
 }
 
-class EditTransaction extends HookConsumerWidget {
-  EditTransaction({
+class TransactionForm extends HookConsumerWidget {
+  TransactionForm({
     super.key,
     required this.transactionType,
-    required this.commit
+    required this.commit,
+    this.initialTransaction,
   });
   
   final TransactionType transactionType;
   final void Function(Transaction) commit;
+  final Transaction? initialTransaction;
 
   final _formKey = GlobalKey<FormState>();
-  
-  final _fromAccountController = TextEditingController(text: '');
-  final _toAccountController = TextEditingController(text: '');
-  final _dateController = TextEditingController(text: DateTime.now().toDate());
+
+  late final TextEditingController _noteController = TextEditingController(text: initialTransaction?.note ?? '');
+  late final TextEditingController _amountController = TextEditingController(text: initialTransaction?.formattedAmount ?? '');
+  late final TextEditingController _fromAccountController = TextEditingController(text: initialTransaction?.from.name ?? '');
+  late final TextEditingController _toAccountController = TextEditingController(text: initialTransaction?.to.name ?? '');
+  late final TextEditingController _dateController = TextEditingController(text: initialTransaction?.date.toDate() ?? DateTime.now().toDate());
 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final categories = ref.watch(categoriesProvider);
+
+    if (!categories.hasValue) {
+      return Loading();
+    }
 
     final myAccountNames = ref.watch(myAccountNamesProvider);
     final otherAccountNames = ref.watch(otherAccountNamesProvider);
 
-    final name = useState('');
-    final amount = useState<double>(0);
-    final date = useState(DateTime.now());
+    final date = useState(initialTransaction?.date ?? DateTime.now());
 
     void submit() {
       if (_formKey.currentState!.validate()) {
-
-        _formKey.currentState!.save();
 
         Account? from;
         Account? to;
@@ -70,12 +76,13 @@ class EditTransaction extends HookConsumerWidget {
         }
 
         var newTransaction = Transaction(
-          note: name.value,
-          amount: (amount.value * pow(10, from.currency.decimals)).floor(),
+          id: initialTransaction?.id,
+          note: _noteController.text,
+          amount: (double.parse(_amountController.text) * pow(10, from.currency.decimals)).floor(),
           from: from,
           to: to,
           date: date.value,
-          category: any,
+          category: categories.value![rootCategoryUid]!,
         );
 
         commit(newTransaction);
@@ -92,7 +99,7 @@ class EditTransaction extends HookConsumerWidget {
           children: <Widget>[
             // Amount Field
             TextFormField(
-              initialValue: '',
+              controller: _amountController,
               autofocus: true,
               enableSuggestions: false,
               autocorrect: false,
@@ -110,15 +117,13 @@ class EditTransaction extends HookConsumerWidget {
                 }
                 return null;
               },
-              onSaved: (value) {
-                amount.value = double.parse(value!);
-              },
             ),
             // From Field
             FormField<String>(
               builder: (formFieldState) => LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   return DropdownMenu<String>(
+                    textStyle: const TextStyle(),
                     width: constraints.maxWidth,
                     requestFocusOnTap: true,
                     controller: _fromAccountController,
@@ -150,13 +155,16 @@ class EditTransaction extends HookConsumerWidget {
               builder: (formFieldState) => LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   return DropdownMenu<String>(
+                    textStyle: const TextStyle(),
                     width: constraints.maxWidth,
                     requestFocusOnTap: true,
                     controller: _toAccountController,
                     enableFilter: true,
                     label: const Text('To'),
                     dropdownMenuEntries: otherAccountNames.map((e) => DropdownMenuEntry<String>(value: e, label: e)).toList(),
-                    inputDecorationTheme: const InputDecorationTheme(),
+                    inputDecorationTheme: const InputDecorationTheme(
+
+                    ),
                     onSelected: (String? selected) {
                       _toAccountController.text = selected!;
                     },
@@ -180,6 +188,7 @@ class EditTransaction extends HookConsumerWidget {
               decoration: const InputDecoration(
                 label: Text('Date'),
               ),
+
               controller: _dateController,
               readOnly: true,
               onTap: (){
@@ -199,12 +208,10 @@ class EditTransaction extends HookConsumerWidget {
             ),
             // Name Field
             TextFormField(
+              controller: _noteController,
               decoration: const InputDecoration(
                 label: Text('Note'),
               ),
-              onSaved: (value) {
-                name.value = value!;
-              },
             ),
             SizedBox.fromSize(size: const Size.square(20)),
             FilledButton(

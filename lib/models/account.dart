@@ -1,11 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter_hello_world/models/currency.dart';
-import 'package:flutter_hello_world/utils.dart';
+import 'package:flutter_hello_world/persistance/persistance.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 
-class Account with UniqueID {
+class Account extends Savable {
 
   Account({
     required this.name,
@@ -13,6 +13,9 @@ class Account with UniqueID {
     this.initialAmount = 0,
     this.personal = false,
   });
+
+  @override
+  String get id => name;
 
   String name;
   int initialAmount;

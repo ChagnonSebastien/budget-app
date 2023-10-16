@@ -1,13 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
-
-mixin UniqueID {
-  final String id = const Uuid().v4();
-}
 
 bool sameDay(DateTime a, DateTime b) {
   if (a.year != b.year) return false;
@@ -21,6 +16,9 @@ extension DateFormatingExtension on DateTime {
   String toDate() {
     String s = DateFormat.yMMMMd().format(this);
     return s;
+  }
+  DateTime trimToDay() {
+    return DateTime(year, month, day);
   }
 }
 

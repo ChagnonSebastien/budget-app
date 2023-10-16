@@ -1,7 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
-import 'package:flutter_hello_world/widgets/edit_transaction.dart';
+import 'package:flutter_hello_world/pages/edit_transaction.dart';
+import 'package:flutter_hello_world/widgets/loading.dart';
+import 'package:flutter_hello_world/widgets/transaction_form.dart';
 import 'package:flutter_hello_world/widgets/transaction_card.dart';
 import 'package:flutter_hello_world/utils.dart';
 import 'package:flutter_hello_world/pages/new_transaction.dart';
@@ -17,15 +18,18 @@ class MyTransactions extends ConsumerWidget {
     final transactionsNotifier = ref.watch(transactionsProvider.notifier);
     final transactions = ref.watch(transactionsProvider);
 
+    if (!transactions.hasValue) {
+      return Loading();
+    }
+
     List<Widget> items = [];
     List<DateTime> itemDates = [];
     DateTime? lastDay;
 
-
-    for (Transaction t in transactions.reversed) {
+    for (Transaction t in transactions.value!.reversed) {
       bool newDay = lastDay == null || !sameDay(t.date, lastDay);
       if (newDay) {
-        DateTime currentDate = DateTime(t.date.year, t.date.month, t.date.day);
+        DateTime currentDate = t.date.trimToDay();
         items.add(GestureDetector(
           onLongPress: () {
             // Do nothing. Prevents the re-ordering of date labels.
@@ -39,14 +43,21 @@ class MyTransactions extends ConsumerWidget {
         itemDates.add(currentDate.add(const Duration(days: 1)));
         lastDay = currentDate;
       }
-      
-      items.add(TransactionCard(
-        key: Key(t.id),
-        transaction: t,
-      ));
+
+      items.add(GestureDetector(
+          key: Key(t.id),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return EditTransaction(
+                transaction: t,
+              );
+            }));
+          },
+          child: TransactionCard(
+            transaction: t,
+          )));
       itemDates.add(t.date);
     }
-
 
     return Scaffold(
       key: scaffoldKey,
@@ -56,21 +67,24 @@ class MyTransactions extends ConsumerWidget {
         shrinkWrap: true,
         children: items,
         onReorder: (oldIndex, newIndex) {
-          final Widget movedCard = items[oldIndex];
+          final Widget gestureDetector = items[oldIndex];
+          if (gestureDetector is! GestureDetector) return;
+          final Widget movedCard = gestureDetector.child!;
           if (movedCard is! TransactionCard) return;
 
-          var previousDay = DateTime(itemDates[newIndex - 1].year, itemDates[newIndex - 1].month, itemDates[newIndex - 1].day);
-          var beforeElementDate = newIndex == itemDates.length ? previousDay : itemDates[newIndex];
-          var afterElementDate = newIndex == 0 ? beforeElementDate.add(const Duration(days: 1)) : itemDates[newIndex - 1];
+          var beforeElementDate =
+              newIndex == itemDates.length ? itemDates[newIndex - 1].trimToDay() : itemDates[newIndex];
+          var afterElementDate =
+              newIndex == 0 ? beforeElementDate.add(const Duration(days: 1)) : itemDates[newIndex - 1];
 
           if (!sameDay(beforeElementDate, afterElementDate.subtract(const Duration(seconds: 1)))) {
-            beforeElementDate = DateTime(afterElementDate.year, afterElementDate.month, afterElementDate.day);
+            beforeElementDate = afterElementDate.trimToDay();
           }
 
-          var newDate = beforeElementDate.add(Duration(microseconds: (afterElementDate.difference(beforeElementDate).inMicroseconds / 2).round()));
+          var halfTimeDiff = (afterElementDate.difference(beforeElementDate).inMicroseconds / 2).round();
+          var newDate = beforeElementDate.add(Duration(microseconds: halfTimeDiff));
           movedCard.transaction.date = newDate;
-
-          transactionsNotifier.reorder();
+          transactionsNotifier.ref.notifyListeners();
         },
       ),
       floatingActionButton: FloatingActionButton(

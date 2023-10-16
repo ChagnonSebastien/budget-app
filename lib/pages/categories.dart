@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/pages/new_category.dart';
-import 'package:flutter_hello_world/utils.dart';
-import 'package:flutter_hello_world/widgets/account_card.dart';
 import 'package:flutter_hello_world/widgets/category_tree.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
