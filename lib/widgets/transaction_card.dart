@@ -38,9 +38,7 @@ class TransactionCard extends StatelessWidget  {
                   style: TextStyle(fontSize: textSize, fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  '\$ ${(transaction.amount /
-                      pow(10, transaction.from.currency.decimals))
-                      .toStringAsFixed(transaction.from.currency.decimals)}',
+                  transaction.currency.formatValue(transaction.amount),
                   style: TextStyle(fontSize: textSize),
                 ),
               ],

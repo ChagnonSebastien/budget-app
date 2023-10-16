@@ -24,7 +24,6 @@ class AccountCard extends StatelessWidget  {
           children: <Widget>[
             Text(account.name),
             Expanded(child: Container()),
-            Text('\$ ${account.formatValue(account.initialAmount)}'),
           ],
         ),
       ),

@@ -30,16 +30,15 @@ Future<Database> database(DatabaseRef _) async {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS Accounts (
           name VARCHAR(255) NOT NULL,
-          initialAmount INT NOT NULL,
-          currency VARCHAR(36) NOT NULL,
           personal BOOLEAN NOT NULL,
-          PRIMARY KEY (name),
-          FOREIGN KEY (currency) REFERENCES Currencies(name)
+          PRIMARY KEY (name)
         );
       ''');
       await db.execute('''
         CREATE TABLE IF NOT EXISTS Transactions (
           uid VARCHAR(36) NOT NULL,
+          amount INT NOT NULL,
+          currency VARCHAR(36) NOT NULL,
           from_account VARCHAR(36) NOT NULL,
           to_account VARCHAR(36) NOT NULL,
           date INT NOT NULL,
@@ -48,7 +47,8 @@ Future<Database> database(DatabaseRef _) async {
           PRIMARY KEY (uid),
           FOREIGN KEY (from_account) REFERENCES Accounts(name),
           FOREIGN KEY (to_account) REFERENCES Accounts(name),
-          FOREIGN KEY (category) REFERENCES Categories(uid)
+          FOREIGN KEY (category) REFERENCES Categories(uid),
+          FOREIGN KEY (currency) REFERENCES Currencies(name)
         );
       ''');
     },

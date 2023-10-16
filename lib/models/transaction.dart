@@ -1,5 +1,7 @@
+import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
+import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/persistance/persistance.dart';
 import 'package:flutter_hello_world/widgets/transaction_form.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,6 +19,7 @@ class Transaction extends Savable {
     required this.to,
     required this.date,
     required this.category,
+    required this.currency,
     this.note,
   }) {
     this.id = id ?? const Uuid().v4();
@@ -30,6 +33,7 @@ class Transaction extends Savable {
   Account to;
   DateTime date;
   Category category;
+  Currency currency;
   String? note;
 
   TransactionType get transactionType {
@@ -46,7 +50,7 @@ class Transaction extends Savable {
     if (amount == 0) {
       return '';
     }
-    return from.formatValue(amount);
+    return currency.formatValue(amount);
   }
 }
 
@@ -59,31 +63,35 @@ class Transactions extends _$Transactions {
     return [
       Transaction(
         amount: 325,
-        from: wallet,
-        to: starbucks,
+        currency: Defaults.currencies.cad,
+        from: Defaults.accounts.wallet,
+        to: Defaults.accounts.starbucks,
         date: DateTime.now().subtract(const Duration(days: 3)),
         category: categories.values.firstWhere((element) => element.name == 'Fast food'),
         note: 'Coffee',
       ),
       Transaction(
         amount: 14689,
-        from: checking,
-        to: maxi,
+        currency: Defaults.currencies.cad,
+        from: Defaults.accounts.checking,
+        to: Defaults.accounts.maxi,
         date: DateTime.now().subtract(const Duration(days: 3)),
         category: categories.values.firstWhere((element) => element.name == 'Groceries'),
       ),
       Transaction(
         amount: 325,
-        from: wallet,
-        to: randolph,
+        currency: Defaults.currencies.cad,
+        from: Defaults.accounts.wallet,
+        to: Defaults.accounts.randolph,
         date: DateTime.now().subtract(const Duration(days: 1)),
         category: categories.values.firstWhere((element) => element.name == 'Restaurant'),
         note: 'Fete de Pierre',
       ),
       Transaction(
         amount: 1020,
-        from: checking,
-        to: viateurBagel,
+        currency: Defaults.currencies.cad,
+        from: Defaults.accounts.checking,
+        to: Defaults.accounts.viateurBagel,
         date: DateTime.now(),
         category: categories.values.firstWhere((element) => element.name == 'Fast food'),
         note: 'Bagels',

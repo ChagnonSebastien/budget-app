@@ -1,6 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter_hello_world/models/currency.dart';
+import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/persistance/persistance.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -9,7 +7,6 @@ class Account extends Savable {
 
   Account({
     required this.name,
-    required this.currency,
     this.initialAmount = 0,
     this.personal = false,
   });
@@ -19,21 +16,8 @@ class Account extends Savable {
 
   String name;
   int initialAmount;
-  final Currency currency;
   bool personal;
-
-  String formatValue(int amount) {
-    return (amount / pow(10, currency.decimals)).toStringAsFixed(currency.decimals);
-  }
 }
-
-final Account wallet = Account(name: 'Wallet', currency: cad, initialAmount: 10000, personal: true);
-final Account checking = Account(name: 'Checking Account', currency: cad, initialAmount: 200000, personal: true);
-final Account viateurBagel = Account(name: "Viateur Bagel", currency: wallet.currency);
-final Account starbucks = Account(name: "Starbucks", currency: wallet.currency);
-final Account randolph = Account(name: "Randolph", currency: wallet.currency);
-final Account maxi = Account(name: "Maxi", currency: wallet.currency);
-
 
 class AccountManager extends StateNotifier<List<Account>> {
   AccountManager([List<Account>? initialAccounts]) : super(initialAccounts ?? []);
@@ -63,7 +47,7 @@ class AccountManager extends StateNotifier<List<Account>> {
 
 
 final accountsProvider = StateNotifierProvider<AccountManager, List<Account>>((ref) {
-  return AccountManager([wallet, checking, viateurBagel, starbucks, randolph, maxi]);
+  return AccountManager(Defaults.accounts.asList());
 });
 
 
