@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 bool sameDay(DateTime a, DateTime b) {
   if (a.year != b.year) return false;
   if (a.month != b.month) return false;
@@ -11,22 +10,21 @@ bool sameDay(DateTime a, DateTime b) {
   return true;
 }
 
-
 extension DateFormatingExtension on DateTime {
   String toDate() {
     String s = DateFormat.yMMMMd().format(this);
     return s;
   }
+
   DateTime trimToDay() {
     return DateTime(year, month, day);
   }
 }
 
 extension StringCasingExtension on String {
-  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
+  String toCapitalized() => length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
   String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
 }
-
 
 Widget dragDecorator(Widget child, int _, Animation<double> animation) {
   return AnimatedBuilder(

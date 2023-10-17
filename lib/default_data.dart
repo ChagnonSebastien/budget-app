@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/currency.dart';
+import 'package:flutter_hello_world/models/transaction.dart';
 
 class Defaults {
   static Categories? _categories;
@@ -24,16 +25,21 @@ class Defaults {
     _accounts ??= Accounts();
     return _accounts!;
   }
+
+  static Transactions? _transactions;
+
+  static Transactions get transactions {
+    _transactions ??= Transactions();
+    return _transactions!;
+  }
 }
 
 class Categories {
   Categories() {
-    food.parent = any;
-    groceries.parent = food;
-    fastFood.parent = food;
-    goingOut.parent = food;
-    any.subCategories = [food];
-    food.subCategories = [groceries, fastFood, goingOut];
+    food.parent = any.uid;
+    groceries.parent = food.uid;
+    fastFood.parent = food.uid;
+    goingOut.parent = food.uid;
   }
 
   final Category any = Category(
@@ -104,5 +110,47 @@ class Accounts {
       randolph,
       maxi,
     ];
+  }
+}
+
+class Transactions {
+  List<Transaction> asList() {
+   return [
+     Transaction(
+       amount: 325,
+       currency: Defaults.currencies.cad,
+       from: Defaults.accounts.wallet,
+       to: Defaults.accounts.starbucks,
+       date: DateTime.now().subtract(const Duration(days: 3)),
+       category: Defaults.categories.fastFood,
+       note: 'Coffee',
+     ),
+     Transaction(
+       amount: 14689,
+       currency: Defaults.currencies.cad,
+       from: Defaults.accounts.checking,
+       to: Defaults.accounts.maxi,
+       date: DateTime.now().subtract(const Duration(days: 3)),
+       category: Defaults.categories.groceries,
+     ),
+     Transaction(
+       amount: 325,
+       currency: Defaults.currencies.cad,
+       from: Defaults.accounts.wallet,
+       to: Defaults.accounts.randolph,
+       date: DateTime.now().subtract(const Duration(days: 1)),
+       category: Defaults.categories.goingOut,
+       note: 'Fete de Pierre',
+     ),
+     Transaction(
+       amount: 1020,
+       currency: Defaults.currencies.cad,
+       from: Defaults.accounts.checking,
+       to: Defaults.accounts.viateurBagel,
+       date: DateTime.now(),
+       category: Defaults.categories.fastFood,
+       note: 'Bagels',
+     ),
+   ];
   }
 }

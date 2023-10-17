@@ -1,10 +1,10 @@
 import 'package:flutter_hello_world/default_data.dart';
-import 'package:flutter_hello_world/persistance/persistance.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hello_world/models/savable.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'account.g.dart';
 
 class Account extends Savable {
-
   Account({
     required this.name,
     this.initialAmount = 0,
@@ -12,50 +12,55 @@ class Account extends Savable {
   });
 
   @override
-  String get id => name;
+  String get uid => name;
 
   String name;
   int initialAmount;
   bool personal;
 }
 
-class AccountManager extends StateNotifier<List<Account>> {
-  AccountManager([List<Account>? initialAccounts]) : super(initialAccounts ?? []);
+@riverpod
+class Accounts extends _$Accounts {
+  @override
+  Future<List<Account>> build() async {
+    return Defaults.accounts.asList();
+  }
 
-  Account? get(String name) =>  state.where((element) => element.name == name).firstOrNull;
+  Future<Account?> get(String name) async {
+    return (await future).where((element) => element.name == name).firstOrNull;
+  }
 
-  bool add(Account newAccount) {
-    if (get(newAccount.name) != null) {
+  Future<bool> add(Account newAccount) async {
+    if (await get(newAccount.name) != null) {
       return false;
     }
 
-    state = [...state, newAccount,];
+    final futureValue = await future;
+    state = AsyncData([...futureValue, newAccount]);
     return true;
   }
 
-  void reorder(int oldIndex, int newIndex) {
+  void reorder(int oldIndex, int newIndex) async {
     if (oldIndex < newIndex) {
       // removing the item at oldIndex will shorten the list by 1.
       newIndex -= 1;
     }
 
-    final Account element = state.removeAt(oldIndex);
-    state.insert(newIndex, element);
-    state = [...state];
+    final futureValue = await future;
+    final Account element = futureValue.removeAt(oldIndex);
+    futureValue.insert(newIndex, element);
+    state = AsyncData([...futureValue]);
   }
 }
 
+@riverpod
+Future<List<String>> myAccountNames(MyAccountNamesRef ref) async {
+  final accounts = await ref.watch(accountsProvider.future);
+  return accounts.where((a) => a.personal).map((a) => a.name).toList();
+}
 
-final accountsProvider = StateNotifierProvider<AccountManager, List<Account>>((ref) {
-  return AccountManager(Defaults.accounts.asList());
-});
-
-
-final myAccountNamesProvider = Provider<List<String>>((ref) {
-  return ref.watch(accountsProvider).where((a) => a.personal).map((a) => a.name).toList();
-});
-
-
-final otherAccountNamesProvider = Provider<List<String>>((ref) {
-  return ref.watch(accountsProvider).where((a) => !a.personal).map((a) => a.name).toList();
-});
+@riverpod
+Future<List<String>> otherAccountNames(OtherAccountNamesRef ref) async {
+  final accounts = await ref.watch(accountsProvider.future);
+  return accounts.where((a) => !a.personal).map((a) => a.name).toList();
+}

@@ -61,7 +61,7 @@ class NewCategory extends HookConsumerWidget {
           );
         },
       );
-    };
+    }
 
     showIcons() async {
       showDialog<void>(
@@ -117,7 +117,7 @@ class NewCategory extends HookConsumerWidget {
           );
         },
       );
-    };
+    }
 
     showColorPicker() {
       showDialog<void>(
@@ -144,7 +144,7 @@ class NewCategory extends HookConsumerWidget {
           );
         },
       );
-    };
+    }
 
     void submit() {
       if (_formKey.currentState!.validate()) {

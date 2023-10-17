@@ -48,35 +48,36 @@ class TransactionForm extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoriesProvider);
 
-    if (!categories.hasValue) {
-      return Loading();
-    }
-
     final myAccountNames = ref.watch(myAccountNamesProvider);
     final otherAccountNames = ref.watch(otherAccountNamesProvider);
 
+    if (!categories.hasValue || !myAccountNames.hasValue || !otherAccountNames.hasValue) {
+      return Loading();
+    }
+
     final date = useState(initialTransaction?.date ?? DateTime.now());
 
-    void submit() {
+    void submit() async {
       if (_formKey.currentState!.validate()) {
         Account? from;
         Account? to;
         Currency currency = Defaults.currencies.cad;
 
+        final accounts = await ref.read(accountsProvider.future);
         if (transactionType.mustBeFromMine) {
-          from = ref.read(accountsProvider).firstWhere((element) => element.name == _fromAccountController.text);
-          to = ref.read(accountsProvider).firstWhere((element) => element.name == _toAccountController.text,
+          from = accounts.firstWhere((element) => element.name == _fromAccountController.text);
+          to = accounts.firstWhere((element) => element.name == _toAccountController.text,
               orElse: () => Account(name: _toAccountController.text));
           ref.read(accountsProvider.notifier).add(to);
         } else {
-          to = ref.read(accountsProvider).firstWhere((element) => element.name == _toAccountController.text);
-          from = ref.read(accountsProvider).firstWhere((element) => element.name == _fromAccountController.text,
+          to = accounts.firstWhere((element) => element.name == _toAccountController.text);
+          from = accounts.firstWhere((element) => element.name == _fromAccountController.text,
               orElse: () => Account(name: _fromAccountController.text));
           ref.read(accountsProvider.notifier).add(from);
         }
 
         var newTransaction = Transaction(
-          id: initialTransaction?.id,
+          uid: initialTransaction?.uid,
           note: _noteController.text,
           amount: (double.parse(_amountController.text) * pow(10, currency.decimals)).floor(),
           from: from,
@@ -136,7 +137,7 @@ class TransactionForm extends HookConsumerWidget {
                           controller: _currencyController,
                           label: const Text('Currency'),
                           dropdownMenuEntries: Defaults.currencies.asList().map((e) {
-                            return DropdownMenuEntry(label: e.name, value: e.id);
+                            return DropdownMenuEntry(label: e.name, value: e.uid);
                           }).toList(),
                           inputDecorationTheme: const InputDecorationTheme(),
                           onSelected: (String? selected) {
@@ -161,7 +162,7 @@ class TransactionForm extends HookConsumerWidget {
                     enableFilter: true,
                     label: const Text('From'),
                     dropdownMenuEntries:
-                        myAccountNames.map((e) => DropdownMenuEntry<String>(value: e, label: e)).toList(),
+                        myAccountNames.value!.map((e) => DropdownMenuEntry<String>(value: e, label: e)).toList(),
                     inputDecorationTheme: const InputDecorationTheme(),
                     onSelected: (String? selected) {
                       _fromAccountController.text = selected!;
@@ -175,7 +176,7 @@ class TransactionForm extends HookConsumerWidget {
                 if (_fromAccountController.text.isEmpty) {
                   return 'Please enter the source account';
                 }
-                if (transactionType.mustBeFromMine && !myAccountNames.contains(_fromAccountController.text)) {
+                if (transactionType.mustBeFromMine && !myAccountNames.value!.contains(_fromAccountController.text)) {
                   return 'Not valid, must one of your account.';
                 }
                 return null;
@@ -193,7 +194,7 @@ class TransactionForm extends HookConsumerWidget {
                     enableFilter: true,
                     label: const Text('To'),
                     dropdownMenuEntries:
-                        otherAccountNames.map((e) => DropdownMenuEntry<String>(value: e, label: e)).toList(),
+                        otherAccountNames.value!.map((e) => DropdownMenuEntry<String>(value: e, label: e)).toList(),
                     inputDecorationTheme: const InputDecorationTheme(),
                     onSelected: (String? selected) {
                       _toAccountController.text = selected!;
@@ -206,7 +207,7 @@ class TransactionForm extends HookConsumerWidget {
                 if (_toAccountController.text.isEmpty) {
                   return 'Please enter the destination account';
                 }
-                if (transactionType.mustBeToMine && !myAccountNames.contains(_toAccountController.text)) {
+                if (transactionType.mustBeToMine && !myAccountNames.value!.contains(_toAccountController.text)) {
                   return 'Not valid, must one of your account.';
                 }
                 return null;

@@ -22,7 +22,7 @@ final materialIconDataProvider =
 );
 
 typedef MaterialIconDataRef = AutoDisposeFutureProviderRef<List<ValidIcon>>;
-String _$categoriesHash() => r'78110f78cbfa91e89957b6894e68e11f1d1dd1c4';
+String _$categoriesHash() => r'4816d6f4d7140235c4da33fc16d0b3d656e211f2';
 
 /// See also [Categories].
 @ProviderFor(Categories)

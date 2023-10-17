@@ -31,14 +31,13 @@ class CategoryTree extends HookConsumerWidget {
         },
       ));
 
-      for (var element in category.subCategories) {
+      var children = categories.value!.values.where((element) => element.parent == category.uid);
+      for (var element in children) {
         exploreCategory(element, level + 1);
       }
     }
 
-    if (categories.hasValue) {
-      exploreCategory(categories.value![rootCategoryUid]!, 1);
-    }
+    exploreCategory(categories.value![rootCategoryUid]!, 1);
 
     return ListView(
       shrinkWrap: true,

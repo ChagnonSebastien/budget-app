@@ -5,7 +5,6 @@ import 'package:flutter_hello_world/pages/transactions.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-
 class Page {
   const Page({
     required this.name,
@@ -46,8 +45,7 @@ class Home extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final selectedPageIndex = useState(0);
+    final selectedPageIndex = useState(2);
 
     return Scaffold(
       appBar: AppBar(
@@ -73,10 +71,10 @@ class Home extends HookConsumerWidget {
             ),
           ),
           ...pages.map((page) => NavigationDrawerDestination(
-            label: Text(page.name),
-            icon: page.icon,
-            selectedIcon: page.selectedIcon,
-          )),
+                label: Text(page.name),
+                icon: page.icon,
+                selectedIcon: page.selectedIcon,
+              )),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 28, vertical: 10),
             child: Divider(),
@@ -92,4 +90,3 @@ class Home extends HookConsumerWidget {
     );
   }
 }
-

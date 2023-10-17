@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_hello_world/default_data.dart';
-import 'package:flutter_hello_world/persistance/persistance.dart';
+import 'package:flutter_hello_world/models/savable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'currency.g.dart';
@@ -11,11 +11,11 @@ class Currency extends Savable {
     required this.name,
     required this.decimals,
     required this.symbol,
-    required this. showSymbolBeforeAmount,
+    required this.showSymbolBeforeAmount,
   });
 
   @override
-  String get id => name;
+  String get uid => name;
 
   final String name;
   final int decimals;
@@ -30,8 +30,10 @@ class Currency extends Savable {
   }
 }
 
-
 @riverpod
-Future<Currency> currency(CurrencyRef ref, String id) async {
-  return Defaults.currencies.cad;
+class Currencies extends _$Currencies {
+  @override
+  Future<List<Currency>> build() async {
+    return Defaults.currencies.asList();
+  }
 }

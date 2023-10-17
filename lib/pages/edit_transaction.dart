@@ -28,7 +28,7 @@ class EditTransaction extends ConsumerWidget {
           commit: (t) {
             ref.read(accountsProvider.notifier).add(t.from);
             ref.read(accountsProvider.notifier).add(t.to);
-            ref.read(transactionsProvider.notifier).editTransaction(transaction.id, t);
+            ref.read(transactionsProvider.notifier).editTransaction(transaction.uid, t);
             Navigator.pop(context);
           },
         ),

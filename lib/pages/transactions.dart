@@ -15,7 +15,6 @@ class MyTransactions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transactionsNotifier = ref.watch(transactionsProvider.notifier);
     final transactions = ref.watch(transactionsProvider);
 
     if (!transactions.hasValue) {
@@ -45,7 +44,7 @@ class MyTransactions extends ConsumerWidget {
       }
 
       items.add(GestureDetector(
-          key: Key(t.id),
+          key: Key(t.uid),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return EditTransaction(
@@ -84,7 +83,7 @@ class MyTransactions extends ConsumerWidget {
           var halfTimeDiff = (afterElementDate.difference(beforeElementDate).inMicroseconds / 2).round();
           var newDate = beforeElementDate.add(Duration(microseconds: halfTimeDiff));
           movedCard.transaction.date = newDate;
-          transactionsNotifier.ref.notifyListeners();
+          ref.read(transactionsProvider.notifier).reorder();
         },
       ),
       floatingActionButton: FloatingActionButton(
