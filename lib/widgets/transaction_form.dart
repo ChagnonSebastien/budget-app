@@ -36,7 +36,7 @@ class TransactionForm extends HookConsumerWidget {
 
   final _formKey = GlobalKey<FormState>();
 
-  late final _amountController = TextEditingController(text: initialTransaction?.formattedAmount ?? '');
+  late final _amountController = TextEditingController(text: initialTransaction?.amountNumber ?? '');
   late final _currencyController = TextEditingController(text: initialTransaction?.currency.name ?? '');
   late final _fromAccountController = TextEditingController(text: initialTransaction?.from.name ?? '');
   late final _toAccountController = TextEditingController(text: initialTransaction?.to.name ?? '');
@@ -47,11 +47,12 @@ class TransactionForm extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoriesProvider);
+    final currencies = ref.watch(currenciesProvider);
 
     final myAccountNames = ref.watch(myAccountNamesProvider);
     final otherAccountNames = ref.watch(otherAccountNamesProvider);
 
-    if (!categories.hasValue || !myAccountNames.hasValue || !otherAccountNames.hasValue) {
+    if (!categories.hasValue || !currencies.hasValue || !myAccountNames.hasValue || !otherAccountNames.hasValue) {
       return Loading();
     }
 
@@ -63,22 +64,19 @@ class TransactionForm extends HookConsumerWidget {
         Account? to;
         Currency currency = Defaults.currencies.cad;
 
-        final accounts = await ref.read(accountsProvider.future);
+        final accountsNotifier = ref.read(accountsProvider.notifier);
         if (transactionType.mustBeFromMine) {
-          from = accounts.firstWhere((element) => element.name == _fromAccountController.text);
-          to = accounts.firstWhere((element) => element.name == _toAccountController.text,
-              orElse: () => Account(name: _toAccountController.text));
+          from = await accountsNotifier.withName(_fromAccountController.text);
+          to = await accountsNotifier.withName(_toAccountController.text, orElse: Account(name: _toAccountController.text));
           ref.read(accountsProvider.notifier).add(to);
         } else {
-          to = accounts.firstWhere((element) => element.name == _toAccountController.text);
-          from = accounts.firstWhere((element) => element.name == _fromAccountController.text,
-              orElse: () => Account(name: _fromAccountController.text));
+          to = await accountsNotifier.withName(_toAccountController.text);
+          from = await accountsNotifier.withName(_fromAccountController.text, orElse: Account(name: _fromAccountController.text));
           ref.read(accountsProvider.notifier).add(from);
         }
 
         var newTransaction = Transaction(
           uid: initialTransaction?.uid,
-          note: _noteController.text,
           amount: (double.parse(_amountController.text) * pow(10, currency.decimals)).floor(),
           from: from,
           to: to,
@@ -86,6 +84,10 @@ class TransactionForm extends HookConsumerWidget {
           category: categories.value![rootCategoryUid]!,
           currency: Defaults.currencies.cad,
         );
+        String reducedNote = _noteController.text.trim();
+        if (reducedNote != '') {
+          newTransaction.note = reducedNote;
+        }
 
         commit(newTransaction);
       }
@@ -141,7 +143,7 @@ class TransactionForm extends HookConsumerWidget {
                           }).toList(),
                           inputDecorationTheme: const InputDecorationTheme(),
                           onSelected: (String? selected) {
-                            _currencyController.text = selected!;
+                            _currencyController.text = currencies.value![selected!]!.name;
                           },
                         );
                       },

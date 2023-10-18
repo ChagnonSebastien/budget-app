@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
@@ -18,48 +17,12 @@ Future<Database> database(DatabaseRef _) async {
   return openDatabase(
     join(await getDatabasesPath(), 'budget_database.db'),
     version: 1,
-    onCreate: (db, _) async {
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS Currencies (
-          name VARCHAR(255) NOT NULL,
-          decimals TINYINT NOT NULL,
-          symbol VARCHAR(63) NOT NULL,
-          showSymbolBeforeAmount BOOLEAN NOT NULL,
-          PRIMARY KEY (name)
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS Accounts (
-          name VARCHAR(255) NOT NULL,
-          personal BOOLEAN NOT NULL,
-          PRIMARY KEY (name)
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS Transactions (
-          uid VARCHAR(36) NOT NULL,
-          amount INT NOT NULL,
-          currency VARCHAR(36) NOT NULL,
-          from_account VARCHAR(36) NOT NULL,
-          to_account VARCHAR(36) NOT NULL,
-          date INT NOT NULL,
-          category VARCHAR(36) NOT NULL,
-          note VARCHAR(255),
-          PRIMARY KEY (uid),
-          FOREIGN KEY (from_account) REFERENCES Accounts(name),
-          FOREIGN KEY (to_account) REFERENCES Accounts(name),
-          FOREIGN KEY (category) REFERENCES Categories(uid),
-          FOREIGN KEY (currency) REFERENCES Currencies(name)
-        );
-      ''');
-    },
   );
 }
 
 String LABEL_UID = "uid";
 
 mixin Crud<Model extends Savable> {
-
   bool initiated = false;
 
   Future<Database> get future;
@@ -67,7 +30,7 @@ mixin Crud<Model extends Savable> {
   String getTableName();
 
   Map<String, dynamic> toJson(Model element);
-  Model fromJson(Map<String, dynamic> json);
+  Future<Model> fromJson(Map<String, dynamic> json);
 
   Future<void> init();
 
@@ -100,6 +63,6 @@ mixin Crud<Model extends Savable> {
       await init();
     }
     List<Map<String, dynamic>> response = await db.query(getTableName());
-    return response.map((element) => fromJson(element)).toList();
+    return Future.wait(response.map((element) => fromJson(element)));
   }
 }

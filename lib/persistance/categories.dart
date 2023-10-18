@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 
 part 'categories.g.dart';
 
-String _LABEL_CATEGORIES = "Categories";
+String LABEL_CATEGORIES = "Categories";
 String _LABEL_NAME = "name";
 String _LABEL_ICON_CODEPOINT = "iconCodepoint";
 String _LABEL_ICON_COLOR_A = "iconColorA";
@@ -17,13 +17,13 @@ String _LABEL_ICON_COLOR_G = "iconColorG";
 String _LABEL_ICON_COLOR_B = "iconColorB";
 String _LABEL_PARENT = "parent";
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CategoriesPersistance extends _$CategoriesPersistance with Crud<Category> {
   @override
   Future<Database> build() => ref.watch(databaseProvider.future);
 
   @override
-  String getTableName() => _LABEL_CATEGORIES;
+  String getTableName() => LABEL_CATEGORIES;
 
   @override
   Map<String, dynamic> toJson(Category element) {
@@ -40,7 +40,7 @@ class CategoriesPersistance extends _$CategoriesPersistance with Crud<Category> 
   }
 
   @override
-  Category fromJson(Map<String, dynamic> json) {
+  Future<Category> fromJson(Map<String, dynamic> json) async {
     return Category(
       uid: json[LABEL_UID],
       name: json[_LABEL_NAME],
@@ -59,7 +59,7 @@ class CategoriesPersistance extends _$CategoriesPersistance with Crud<Category> 
   Future<void> init() async {
     final db = await future;
     await db.execute('''
-        CREATE TABLE IF NOT EXISTS ${_LABEL_CATEGORIES} (
+        CREATE TABLE IF NOT EXISTS ${LABEL_CATEGORIES} (
           ${LABEL_UID} VARCHAR(36) NOT NULL ,
           ${_LABEL_NAME} VARCHAR(255) NOT NULL ,
           ${_LABEL_ICON_CODEPOINT} INT NOT NULL,
@@ -69,7 +69,7 @@ class CategoriesPersistance extends _$CategoriesPersistance with Crud<Category> 
           ${_LABEL_ICON_COLOR_B} INT NOT NULL,
           ${_LABEL_PARENT} VARCHAR(36),
           PRIMARY KEY (${LABEL_UID}),
-          FOREIGN KEY (${_LABEL_PARENT}) REFERENCES ${_LABEL_CATEGORIES}(${LABEL_UID})
+          FOREIGN KEY (${_LABEL_PARENT}) REFERENCES ${LABEL_CATEGORIES}(${LABEL_UID})
         );
       ''');
 

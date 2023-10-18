@@ -45,7 +45,7 @@ class Home extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedPageIndex = useState(2);
+    final selectedPageIndex = useState(0);
 
     return Scaffold(
       appBar: AppBar(

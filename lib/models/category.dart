@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hello_world/models/savable.dart';
 import 'package:flutter_hello_world/persistance/categories.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -37,30 +34,6 @@ class Category extends Savable {
   get icon {
     return Icon(iconData, color: iconColor);
   }
-}
-
-class ValidIcon {
-  ValidIcon({
-    required this.searchFields,
-    required this.codepoint,
-  });
-
-  final List<String> searchFields;
-  final int codepoint;
-}
-
-@riverpod
-Future<List<ValidIcon>> materialIconData(MaterialIconDataRef ref) async {
-  String data = await rootBundle.loadString('assets/iconMetadata.json');
-  List<Map<String, dynamic>> icons = List<Map<String, dynamic>>.from(jsonDecode(data));
-  List<ValidIcon> validIcons = icons
-      .map((icon) => ValidIcon(
-            searchFields: List<String>.from(icon['tags']),
-            codepoint: int.parse(icon['codepoint'].substring(2), radix: 16),
-          ))
-      .toList();
-  ref.keepAlive();
-  return validIcons;
 }
 
 @Riverpod(keepAlive: true)

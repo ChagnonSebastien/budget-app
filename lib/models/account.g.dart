@@ -6,7 +6,7 @@ part of 'account.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAccountNamesHash() => r'95439fda713fb1d805c9378d5fbe7151199971e8';
+String _$myAccountNamesHash() => r'd66af08b572f1b090e9d49ddd2be032b88be4e6c';
 
 /// See also [myAccountNames].
 @ProviderFor(myAccountNames)
@@ -21,7 +21,7 @@ final myAccountNamesProvider = AutoDisposeFutureProvider<List<String>>.internal(
 );
 
 typedef MyAccountNamesRef = AutoDisposeFutureProviderRef<List<String>>;
-String _$otherAccountNamesHash() => r'da3856cc44a506f9fdd7272346eaf7a9702cc45f';
+String _$otherAccountNamesHash() => r'65ba17095af480ab0547f4418db04b6238b0d4bb';
 
 /// See also [otherAccountNames].
 @ProviderFor(otherAccountNames)
@@ -37,12 +37,12 @@ final otherAccountNamesProvider =
 );
 
 typedef OtherAccountNamesRef = AutoDisposeFutureProviderRef<List<String>>;
-String _$accountsHash() => r'3db1a21a39cc3039e40c0d29ef39e6f90d7b612f';
+String _$accountsHash() => r'591131356b305a6df26f9fa9f2ec95cae12e15be';
 
 /// See also [Accounts].
 @ProviderFor(Accounts)
 final accountsProvider =
-    AutoDisposeAsyncNotifierProvider<Accounts, List<Account>>.internal(
+    AsyncNotifierProvider<Accounts, Map<String, Account>>.internal(
   Accounts.new,
   name: r'accountsProvider',
   debugGetCreateSourceHash:
@@ -51,6 +51,6 @@ final accountsProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$Accounts = AutoDisposeAsyncNotifier<List<Account>>;
+typedef _$Accounts = AsyncNotifier<Map<String, Account>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, inference_failure_on_uninitialized_variable, inference_failure_on_function_return_type, inference_failure_on_untyped_parameter

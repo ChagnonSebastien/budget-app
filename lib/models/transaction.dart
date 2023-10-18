@@ -3,6 +3,7 @@ import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/savable.dart';
+import 'package:flutter_hello_world/persistance/transactions.dart';
 import 'package:flutter_hello_world/widgets/transaction_form.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
@@ -44,11 +45,18 @@ class Transaction extends Savable {
     }
   }
 
-  get formattedAmount {
+  get amountNumber {
     if (amount == 0) {
       return '';
     }
-    return currency.formatValue(amount);
+    return currency.formatNumber(amount);
+  }
+
+  get amountFull {
+    if (amount == 0) {
+      return '';
+    }
+    return currency.formatFull(amount);
   }
 }
 
@@ -56,10 +64,13 @@ class Transaction extends Savable {
 class Transactions extends _$Transactions {
   @override
   Future<List<Transaction>> build() async {
-    return Defaults.transactions.asList();
+    final items =  await ref.read(transactionsPersistanceProvider.notifier).readAll();
+    items.sort((a, b) => a.date.compareTo(b.date));
+    return items;
   }
 
   void newTransaction(Transaction transaction) async {
+    await ref.read(transactionsPersistanceProvider.notifier).create(transaction);
     final previousState = await future;
     final newState = [...previousState, transaction];
     newState.sort((a, b) => a.date.compareTo(b.date));

@@ -21,7 +21,7 @@ class MyAccounts extends ConsumerWidget {
       padding: const EdgeInsets.all(10),
       proxyDecorator: dragDecorator,
       onReorder: ref.read(accountsProvider.notifier).reorder,
-      children: accounts.value!.where((element) => element.personal).map((e) {
+      children: accounts.value!.values.where((element) => element.personal).map((e) {
         return AccountCard(key: Key(e.name), account: e);
       }).toList(),
 

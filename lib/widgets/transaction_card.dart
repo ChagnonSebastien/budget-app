@@ -37,7 +37,7 @@ class TransactionCard extends StatelessWidget  {
                   style: TextStyle(fontSize: textSize, fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  transaction.currency.formatValue(transaction.amount),
+                  transaction.currency.formatFull(transaction.amount),
                   style: TextStyle(fontSize: textSize),
                 ),
               ],

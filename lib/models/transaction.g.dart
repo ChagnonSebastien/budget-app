@@ -6,7 +6,7 @@ part of 'transaction.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$transactionsHash() => r'fcb7210b4a359259180f60e71d4893772844cb0b';
+String _$transactionsHash() => r'1746796371af9859f4cd39b97d30af7d4b454794';
 
 /// See also [Transactions].
 @ProviderFor(Transactions)
