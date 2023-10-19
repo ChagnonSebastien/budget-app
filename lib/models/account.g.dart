@@ -37,7 +37,7 @@ final otherAccountNamesProvider =
 );
 
 typedef OtherAccountNamesRef = AutoDisposeFutureProviderRef<List<String>>;
-String _$accountsHash() => r'591131356b305a6df26f9fa9f2ec95cae12e15be';
+String _$accountsHash() => r'48de497f2afdd6f149ef526a1e6d0a20a0ee5773';
 
 /// See also [Accounts].
 @ProviderFor(Accounts)

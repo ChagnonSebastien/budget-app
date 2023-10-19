@@ -42,7 +42,20 @@ class Currency extends Savable {
 class Currencies extends _$Currencies {
   @override
   Future<Map<String, Currency>> build() async {
+    return getAll();
+  }
+
+  Future<Map<String, Currency>> getAll() async {
     List<Currency> items = await ref.read(currenciesPersistanceProvider.notifier).readAll();
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
+  }
+
+  Future<Function> factoryReset() async {
+    await ref.read(currenciesPersistanceProvider.notifier).deleteAll();
+
+    return () async {
+      await ref.read(currenciesPersistanceProvider.notifier).populateData();
+      state = AsyncData(await getAll());
+    };
   }
 }

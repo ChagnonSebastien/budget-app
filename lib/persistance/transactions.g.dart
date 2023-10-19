@@ -7,7 +7,7 @@ part of 'transactions.dart';
 // **************************************************************************
 
 String _$transactionsPersistanceHash() =>
-    r'f7fce2d1d0aa118b3b4f82e79f23ab41fca6b99f';
+    r'39e1c105c262a316d3a1395d74be5bd785df47c0';
 
 /// See also [TransactionsPersistance].
 @ProviderFor(TransactionsPersistance)

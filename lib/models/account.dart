@@ -27,8 +27,7 @@ class Account extends Savable {
 class Accounts extends _$Accounts {
   @override
   Future<Map<String, Account>> build() async {
-    List<Account> items = await ref.read(accountsPersistanceProvider.notifier).readAll();
-    return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
+    return getAll();
   }
 
   Future<bool> add(Account newAccount) async {
@@ -36,6 +35,8 @@ class Accounts extends _$Accounts {
     if (futureValue.containsKey(newAccount.uid)) {
       return false;
     }
+
+    await ref.read(accountsPersistanceProvider.notifier).create(newAccount);
 
     state = AsyncData({
       ...futureValue,
@@ -58,6 +59,20 @@ class Accounts extends _$Accounts {
       return futureValue.values.firstWhere((element) => element.name == name);
     }
     return futureValue.values.firstWhere((element) => element.name == name, orElse: () => orElse,);
+  }
+
+  Future<Map<String, Account>> getAll() async {
+    List<Account> items = await ref.read(accountsPersistanceProvider.notifier).readAll();
+    return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
+  }
+
+  Future<Function> factoryReset() async {
+    await ref.read(accountsPersistanceProvider.notifier).deleteAll();
+
+    return () async {
+      await ref.read(accountsPersistanceProvider.notifier).populateData();
+      state = AsyncData(await getAll());
+    };
   }
 }
 

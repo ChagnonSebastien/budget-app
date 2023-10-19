@@ -7,7 +7,7 @@ part of 'currencies.dart';
 // **************************************************************************
 
 String _$currenciesPersistanceHash() =>
-    r'82666edd6afb7b20e6dee2fa26ccbcc8921fbf41';
+    r'b3c25679d46348973310b9c6253a1142eace1d0e';
 
 /// See also [CurrenciesPersistance].
 @ProviderFor(CurrenciesPersistance)

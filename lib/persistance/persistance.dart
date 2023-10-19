@@ -12,8 +12,6 @@ part 'persistance.g.dart';
 Future<Database> database(DatabaseRef _) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await deleteDatabase(join(await getDatabasesPath(), 'budget_database.db'));
-
   return openDatabase(
     join(await getDatabasesPath(), 'budget_database.db'),
     version: 1,
@@ -33,6 +31,8 @@ mixin Crud<Model extends Savable> {
   Future<Model> fromJson(Map<String, dynamic> json);
 
   Future<void> init();
+
+  Future<void> populateData();
 
   Future<void> create(Model newElement, {ConflictAlgorithm? conflictAlgorithm}) async {
     final db = await future;
@@ -64,5 +64,20 @@ mixin Crud<Model extends Savable> {
     }
     List<Map<String, dynamic>> response = await db.query(getTableName());
     return Future.wait(response.map((element) => fromJson(element)));
+  }
+
+  Future<void> updateElement(Model element) async {
+    final db = await future;
+    await db.update(getTableName(), toJson(element), where: '$LABEL_UID = ?', whereArgs: [element.uid]);
+  }
+
+  Future<void> delete(String uid) async {
+    final db = await future;
+    await db.delete(getTableName(), where: '$LABEL_UID = ?', whereArgs: [uid]);
+  }
+
+  Future<void> deleteAll() async {
+    final db = await future;
+    await db.delete(getTableName());
   }
 }

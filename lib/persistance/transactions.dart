@@ -81,7 +81,10 @@ class TransactionsPersistance extends _$TransactionsPersistance with Crud<Transa
           FOREIGN KEY ($_LABEL_CATEGORY) REFERENCES $LABEL_CATEGORIES($LABEL_UID)
         );
       ''');
-
+  }
+  
+  @override
+  Future<void> populateData() async {
     await Future.wait(Defaults.transactions.asList().map((e) => create(e)));
   }
 }

@@ -6,7 +6,7 @@ part of 'persistance.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$databaseHash() => r'15db53df30468492d0db8478055616f87d0bb113';
+String _$databaseHash() => r'e4f444ce779d057cbb320b9d3d4ee32f5f15c685';
 
 /// See also [database].
 @ProviderFor(database)

@@ -57,4 +57,9 @@ class CurrenciesPersistance extends _$CurrenciesPersistance with Crud<Currency> 
 
     await Future.wait(Defaults.currencies.asList().map((e) => create(e)));
   }
+  
+  @override
+  Future<void> populateData() async {
+    await Future.wait(Defaults.currencies.asList().map((e) => create(e)));
+  }
 }

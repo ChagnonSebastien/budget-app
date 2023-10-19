@@ -40,8 +40,7 @@ class Category extends Savable {
 class Categories extends _$Categories {
   @override
   Future<Map<String, Category>> build() async {
-    List<Category> items = await ref.read(categoriesPersistanceProvider.notifier).readAll();
-    return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
+    return getAll();
   }
 
   add(Category newCategory, Category parentCategory) async {
@@ -50,5 +49,19 @@ class Categories extends _$Categories {
 
     final previousState = await future;
     state = AsyncData(Map.from({...previousState, newCategory.uid: newCategory}));
+  }
+
+  Future<Map<String, Category>> getAll() async {
+    List<Category> items = await ref.read(categoriesPersistanceProvider.notifier).readAll();
+    return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
+  }
+
+  Future<Function> factoryReset() async {
+    await ref.read(categoriesPersistanceProvider.notifier).deleteAll();
+
+    return () async {
+      await ref.read(categoriesPersistanceProvider.notifier).populateData();
+      state = AsyncData(await getAll());
+    };
   }
 }

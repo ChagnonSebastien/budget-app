@@ -51,6 +51,10 @@ class AccountsPersistance extends _$AccountsPersistance with Crud<Account> {
         );
       ''');
 
+  }
+  
+  @override
+  Future<void> populateData() async {
     await Future.wait(Defaults.accounts.asList().map((e) => create(e)));
   }
 }

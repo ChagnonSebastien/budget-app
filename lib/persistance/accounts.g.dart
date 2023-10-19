@@ -7,7 +7,7 @@ part of 'accounts.dart';
 // **************************************************************************
 
 String _$accountsPersistanceHash() =>
-    r'59b56736f44ad2054848088a85f19e79a35befed';
+    r'83ccdd926e5fb8f47d4b0115a87686ee61ba281c';
 
 /// See also [AccountsPersistance].
 @ProviderFor(AccountsPersistance)

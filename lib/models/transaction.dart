@@ -64,9 +64,7 @@ class Transaction extends Savable {
 class Transactions extends _$Transactions {
   @override
   Future<List<Transaction>> build() async {
-    final items =  await ref.read(transactionsPersistanceProvider.notifier).readAll();
-    items.sort((a, b) => a.date.compareTo(b.date));
-    return items;
+    return getAll();
   }
 
   void newTransaction(Transaction transaction) async {
@@ -89,5 +87,20 @@ class Transactions extends _$Transactions {
     final newState = [...previousState];
     newState.sort((a, b) => a.date.compareTo(b.date));
     state = AsyncData(newState);
+  }
+
+  Future<List<Transaction>> getAll() async {
+    final items =  await ref.read(transactionsPersistanceProvider.notifier).readAll();
+    items.sort((a, b) => a.date.compareTo(b.date));
+    return items;
+  }
+
+  Future<Function> factoryReset() async {
+    await ref.read(transactionsPersistanceProvider.notifier).deleteAll();
+
+    return () async {
+      await ref.read(transactionsPersistanceProvider.notifier).populateData();
+      state = AsyncData(await getAll());
+    };
   }
 }

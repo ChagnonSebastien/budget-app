@@ -72,7 +72,10 @@ class CategoriesPersistance extends _$CategoriesPersistance with Crud<Category> 
           FOREIGN KEY (${_LABEL_PARENT}) REFERENCES ${LABEL_CATEGORIES}(${LABEL_UID})
         );
       ''');
-
+  }
+  
+  @override
+  Future<void> populateData() async {
     await Future.wait(Defaults.categories.asMap().values.map((e) => create(e)));
   }
 }
