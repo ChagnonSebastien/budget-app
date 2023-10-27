@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_hello_world/models/savable.dart';
-import 'package:flutter_hello_world/persistance/currencies.dart';
+import 'package:flutter_hello_world/persistence/currencies.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -46,15 +46,15 @@ class Currencies extends _$Currencies {
   }
 
   Future<Map<String, Currency>> getAll() async {
-    List<Currency> items = await ref.read(currenciesPersistanceProvider.notifier).readAll();
+    List<Currency> items = await ref.read(currenciesPersistenceProvider.notifier).readAll();
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
   }
 
   Future<Function> factoryReset() async {
-    await ref.read(currenciesPersistanceProvider.notifier).deleteAll();
+    await ref.read(currenciesPersistenceProvider.notifier).deleteAll();
 
     return () async {
-      await ref.read(currenciesPersistanceProvider.notifier).populateData();
+      await ref.read(currenciesPersistenceProvider.notifier).populateData();
       state = AsyncData(await getAll());
     };
   }

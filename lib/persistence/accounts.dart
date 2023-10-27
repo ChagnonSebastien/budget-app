@@ -1,6 +1,6 @@
 import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/models/account.dart';
-import 'package:flutter_hello_world/persistance/persistance.dart';
+import 'package:flutter_hello_world/persistence/persistence.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,7 +12,7 @@ String _LABEL_INITIAL_AMOUNT = "initialAmount";
 String _LABEL_PERSONAL = "personal";
 
 @Riverpod(keepAlive: true)
-class AccountsPersistance extends _$AccountsPersistance with Crud<Account> {
+class AccountsPersistence extends _$AccountsPersistence with Crud<Account> {
   @override
   Future<Database> build() => ref.watch(databaseProvider.future);
 

@@ -1,5 +1,5 @@
 import 'package:flutter_hello_world/models/savable.dart';
-import 'package:flutter_hello_world/persistance/accounts.dart';
+import 'package:flutter_hello_world/persistence/accounts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -36,7 +36,7 @@ class Accounts extends _$Accounts {
       return false;
     }
 
-    await ref.read(accountsPersistanceProvider.notifier).create(newAccount);
+    await ref.read(accountsPersistenceProvider.notifier).create(newAccount);
 
     state = AsyncData({
       ...futureValue,
@@ -62,15 +62,15 @@ class Accounts extends _$Accounts {
   }
 
   Future<Map<String, Account>> getAll() async {
-    List<Account> items = await ref.read(accountsPersistanceProvider.notifier).readAll();
+    List<Account> items = await ref.read(accountsPersistenceProvider.notifier).readAll();
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
   }
 
   Future<Function> factoryReset() async {
-    await ref.read(accountsPersistanceProvider.notifier).deleteAll();
+    await ref.read(accountsPersistenceProvider.notifier).deleteAll();
 
     return () async {
-      await ref.read(accountsPersistanceProvider.notifier).populateData();
+      await ref.read(accountsPersistenceProvider.notifier).populateData();
       state = AsyncData(await getAll());
     };
   }

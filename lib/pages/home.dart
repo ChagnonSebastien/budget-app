@@ -6,10 +6,10 @@ import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/pages/accounts.dart';
 import 'package:flutter_hello_world/pages/categories.dart';
 import 'package:flutter_hello_world/pages/transactions.dart';
-import 'package:flutter_hello_world/persistance/accounts.dart';
-import 'package:flutter_hello_world/persistance/categories.dart';
-import 'package:flutter_hello_world/persistance/currencies.dart';
-import 'package:flutter_hello_world/persistance/transactions.dart';
+import 'package:flutter_hello_world/persistence/accounts.dart';
+import 'package:flutter_hello_world/persistence/categories.dart';
+import 'package:flutter_hello_world/persistence/currencies.dart';
+import 'package:flutter_hello_world/persistence/transactions.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

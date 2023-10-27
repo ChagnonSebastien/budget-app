@@ -1,6 +1,6 @@
 import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/models/currency.dart';
-import 'package:flutter_hello_world/persistance/persistance.dart';
+import 'package:flutter_hello_world/persistence/persistence.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +13,7 @@ String _LABEL_SYMBOL = "symbol";
 String _LABEL_SHOW_SYMBOL_BEFORE_AMOUNT = "showSymbolBeforeAmount";
 
 @Riverpod(keepAlive: true)
-class CurrenciesPersistance extends _$CurrenciesPersistance with Crud<Currency> {
+class CurrenciesPersistence extends _$CurrenciesPersistence with Crud<Currency> {
   @override
   Future<Database> build() => ref.watch(databaseProvider.future);
 

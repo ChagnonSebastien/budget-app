@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/savable.dart';
-import 'package:flutter_hello_world/persistance/categories.dart';
+import 'package:flutter_hello_world/persistence/categories.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -45,22 +45,22 @@ class Categories extends _$Categories {
 
   add(Category newCategory, Category parentCategory) async {
     newCategory.parent = parentCategory.uid;
-    await ref.read(categoriesPersistanceProvider.notifier).create(newCategory);
+    await ref.read(categoriesPersistenceProvider.notifier).create(newCategory);
 
     final previousState = await future;
     state = AsyncData(Map.from({...previousState, newCategory.uid: newCategory}));
   }
 
   Future<Map<String, Category>> getAll() async {
-    List<Category> items = await ref.read(categoriesPersistanceProvider.notifier).readAll();
+    List<Category> items = await ref.read(categoriesPersistenceProvider.notifier).readAll();
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
   }
 
   Future<Function> factoryReset() async {
-    await ref.read(categoriesPersistanceProvider.notifier).deleteAll();
+    await ref.read(categoriesPersistenceProvider.notifier).deleteAll();
 
     return () async {
-      await ref.read(categoriesPersistanceProvider.notifier).populateData();
+      await ref.read(categoriesPersistenceProvider.notifier).populateData();
       state = AsyncData(await getAll());
     };
   }

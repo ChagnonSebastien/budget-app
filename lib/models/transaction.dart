@@ -3,7 +3,7 @@ import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/savable.dart';
-import 'package:flutter_hello_world/persistance/transactions.dart';
+import 'package:flutter_hello_world/persistence/transactions.dart';
 import 'package:flutter_hello_world/widgets/transaction_form.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
@@ -68,7 +68,7 @@ class Transactions extends _$Transactions {
   }
 
   void newTransaction(Transaction transaction) async {
-    await ref.read(transactionsPersistanceProvider.notifier).create(transaction);
+    await ref.read(transactionsPersistenceProvider.notifier).create(transaction);
     final previousState = await future;
     final newState = [...previousState, transaction];
     newState.sort((a, b) => a.date.compareTo(b.date));
@@ -90,16 +90,16 @@ class Transactions extends _$Transactions {
   }
 
   Future<List<Transaction>> getAll() async {
-    final items =  await ref.read(transactionsPersistanceProvider.notifier).readAll();
+    final items =  await ref.read(transactionsPersistenceProvider.notifier).readAll();
     items.sort((a, b) => a.date.compareTo(b.date));
     return items;
   }
 
   Future<Function> factoryReset() async {
-    await ref.read(transactionsPersistanceProvider.notifier).deleteAll();
+    await ref.read(transactionsPersistenceProvider.notifier).deleteAll();
 
     return () async {
-      await ref.read(transactionsPersistanceProvider.notifier).populateData();
+      await ref.read(transactionsPersistenceProvider.notifier).populateData();
       state = AsyncData(await getAll());
     };
   }

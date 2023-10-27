@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-part 'persistance.g.dart';
+part 'persistence.g.dart';
 
 @Riverpod(keepAlive: true)
 Future<Database> database(DatabaseRef _) async {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/models/category.dart';
-import 'package:flutter_hello_world/persistance/persistance.dart';
+import 'package:flutter_hello_world/persistence/persistence.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,7 +18,7 @@ String _LABEL_ICON_COLOR_B = "iconColorB";
 String _LABEL_PARENT = "parent";
 
 @Riverpod(keepAlive: true)
-class CategoriesPersistance extends _$CategoriesPersistance with Crud<Category> {
+class CategoriesPersistence extends _$CategoriesPersistence with Crud<Category> {
   @override
   Future<Database> build() => ref.watch(databaseProvider.future);
 

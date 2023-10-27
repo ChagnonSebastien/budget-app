@@ -3,10 +3,10 @@ import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
-import 'package:flutter_hello_world/persistance/accounts.dart';
-import 'package:flutter_hello_world/persistance/categories.dart';
-import 'package:flutter_hello_world/persistance/currencies.dart';
-import 'package:flutter_hello_world/persistance/persistance.dart';
+import 'package:flutter_hello_world/persistence/accounts.dart';
+import 'package:flutter_hello_world/persistence/categories.dart';
+import 'package:flutter_hello_world/persistence/currencies.dart';
+import 'package:flutter_hello_world/persistence/persistence.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -22,7 +22,7 @@ String _LABEL_CATEGORY = "category";
 String _LABEL_NOTE = "note";
 
 @Riverpod(keepAlive: true)
-class TransactionsPersistance extends _$TransactionsPersistance with Crud<Transaction> {
+class TransactionsPersistence extends _$TransactionsPersistence with Crud<Transaction> {
   @override
   Future<sql.Database> build() => ref.watch(databaseProvider.future);
 

@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'currencies.dart';
+part of 'transactions.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currenciesPersistanceHash() =>
-    r'b3c25679d46348973310b9c6253a1142eace1d0e';
+String _$transactionsPersistenceHash() =>
+    r'0514910f7d4c9a186599021df475034cd4a828de';
 
-/// See also [CurrenciesPersistance].
-@ProviderFor(CurrenciesPersistance)
-final currenciesPersistanceProvider =
-    AsyncNotifierProvider<CurrenciesPersistance, Database>.internal(
-  CurrenciesPersistance.new,
-  name: r'currenciesPersistanceProvider',
+/// See also [TransactionsPersistence].
+@ProviderFor(TransactionsPersistence)
+final transactionsPersistenceProvider =
+    AsyncNotifierProvider<TransactionsPersistence, sql.Database>.internal(
+  TransactionsPersistence.new,
+  name: r'transactionsPersistenceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$currenciesPersistanceHash,
+      : _$transactionsPersistenceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$CurrenciesPersistance = AsyncNotifier<Database>;
+typedef _$TransactionsPersistence = AsyncNotifier<sql.Database>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, inference_failure_on_uninitialized_variable, inference_failure_on_function_return_type, inference_failure_on_untyped_parameter
