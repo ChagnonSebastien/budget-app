@@ -5,18 +5,19 @@ import 'package:flutter_hello_world/utils.dart';
 import 'package:flutter_hello_world/widgets/category_tree.dart';
 import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class NewCategory extends HookConsumerWidget {
-  NewCategory({
-    super.key,
-  });
+class CategoryForm extends HookConsumerWidget {
+  CategoryForm({super.key, required this.commit, this.initialCategory});
+
+  final Function(Category) commit;
+  final Category? initialCategory;
 
   final _formKey = GlobalKey<FormState>();
 
-  final _textCategory = TextEditingController(text: "");
-  final _nameController = TextEditingController();
+  late final _textCategory = TextEditingController();
+  late final _nameController = TextEditingController(text: initialCategory?.name ?? "");
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,14 +27,14 @@ class NewCategory extends HookConsumerWidget {
       return Loading();
     }
 
-    final parentCategory = useState(categories.value![rootCategoryUid]!);
+    final parentCategory = useState(categories.value![initialCategory?.parent ?? rootCategoryUid]!);
     useEffect(() {
       _textCategory.text = parentCategory.value.name;
       return null;
     }, [parentCategory.value]);
 
-    final codepoint = useState(Icons.auto_awesome.codePoint);
-    final color = useState<Color>(Colors.orangeAccent);
+    final codepoint = useState(initialCategory?.codepoint ?? Icons.auto_awesome.codePoint);
+    final color = useState<Color>(initialCategory?.iconColor ?? Colors.orangeAccent);
 
     showCategorySelection() {
       showDialog<void>(
@@ -150,11 +151,79 @@ class NewCategory extends HookConsumerWidget {
     void submit() {
       if (_formKey.currentState!.validate()) {
         String newCategoryName = _nameController.text.toCapitalized();
-        Category newCategory = Category(name: newCategoryName, codepoint: codepoint.value, iconColor: color.value);
-        ref.read(categoriesProvider.notifier).add(newCategory, parentCategory.value);
-        Navigator.pop(context);
+        Category newCategory = Category(
+            uid: initialCategory?.uid, name: newCategoryName, codepoint: codepoint.value, iconColor: color.value);
+        newCategory.parent = parentCategory.value.uid;
+        commit(newCategory);
       }
     }
+
+    List<Widget> formFields = [];
+    if (initialCategory?.uid != rootCategoryUid) {
+      formFields.add(TextFormField(
+        controller: _textCategory,
+        onTap: showCategorySelection,
+        readOnly: true,
+        decoration: InputDecoration(
+          label: const Text('Parent category'),
+          icon: parentCategory.value.icon,
+        ),
+      ));
+    }
+    formFields.insertAll(formFields.length, [
+      TextFormField(
+        decoration: const InputDecoration(
+          label: Text('Name'),
+        ),
+        autofocus: true,
+        controller: _nameController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Select new category name';
+          }
+          if (initialCategory?.name != _nameController.text &&
+              ref
+                  .read(categoriesProvider)
+                  .value!
+                  .values
+                  .map<String>((value) => value.name)
+                  .contains(_nameController.text)) {
+            return 'This name already exists for another category';
+          }
+          return null;
+        },
+      ),
+      Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
+        Container(
+          margin: const EdgeInsets.all(20),
+          child: Icon(
+            IconData(codepoint.value, fontFamily: 'MaterialIcons'),
+            size: 80,
+            color: color.value,
+          ),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              MaterialButton(
+                onPressed: showIcons,
+                child: const Text('Select icon'),
+              ),
+              MaterialButton(
+                onPressed: showColorPicker,
+                child: const Text('Select color'),
+              ),
+            ],
+          ),
+        ),
+      ]),
+      SizedBox.fromSize(size: const Size.square(20)),
+      FilledButton(
+        onPressed: submit,
+        child: const Text('Create'),
+      ),
+    ]);
 
     return Scaffold(
       appBar: AppBar(
@@ -167,68 +236,7 @@ class NewCategory extends HookConsumerWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _textCategory,
-                onTap: showCategorySelection,
-                readOnly: true,
-                decoration: InputDecoration(
-                  label: const Text('Parent category'),
-                  icon: parentCategory.value.icon,
-                ),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  label: Text('Name'),
-                ),
-                autofocus: true,
-                controller: _nameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Select new category name';
-                  }
-                  if (ref
-                      .read(categoriesProvider)
-                      .value!
-                      .values
-                      .map<String>((value) => value.name)
-                      .contains(_nameController.text)) {
-                    return 'This name already exists for another category';
-                  }
-                  return null;
-                },
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
-                Container(
-                  margin: const EdgeInsets.all(20),
-                  child: Icon(
-                    IconData(codepoint.value, fontFamily: 'MaterialIcons'),
-                    size: 80,
-                    color: color.value,
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MaterialButton(
-                        onPressed: showIcons,
-                        child: const Text('Select icon'),
-                      ),
-                      MaterialButton(
-                        onPressed: showColorPicker,
-                        child: const Text('Select color'),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
-              SizedBox.fromSize(size: const Size.square(20)),
-              FilledButton(
-                onPressed: submit,
-                child: const Text('Create'),
-              ),
-            ],
+            children: formFields,
           ),
         ),
       ),

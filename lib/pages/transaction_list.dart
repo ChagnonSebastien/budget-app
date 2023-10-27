@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
-import 'package:flutter_hello_world/pages/edit_transaction.dart';
-import 'package:flutter_hello_world/widgets/loading.dart';
-import 'package:flutter_hello_world/widgets/transaction_form.dart';
-import 'package:flutter_hello_world/widgets/transaction_card.dart';
+import 'package:flutter_hello_world/pages/transaction_edit.dart';
+import 'package:flutter_hello_world/pages/transaction_new.dart';
 import 'package:flutter_hello_world/utils.dart';
-import 'package:flutter_hello_world/pages/new_transaction.dart';
+import 'package:flutter_hello_world/widgets/loading.dart';
+import 'package:flutter_hello_world/widgets/transaction_card.dart';
+import 'package:flutter_hello_world/widgets/transaction_form.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MyTransactions extends ConsumerWidget {

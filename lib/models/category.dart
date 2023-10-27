@@ -43,12 +43,19 @@ class Categories extends _$Categories {
     return getAll();
   }
 
-  add(Category newCategory, Category parentCategory) async {
-    newCategory.parent = parentCategory.uid;
+  add(Category newCategory) async {
     await ref.read(categoriesPersistenceProvider.notifier).create(newCategory);
 
     final previousState = await future;
     state = AsyncData(Map.from({...previousState, newCategory.uid: newCategory}));
+  }
+
+  void editCategory(Category category) async {
+    await ref.read(categoriesPersistenceProvider.notifier).updateElement(category);
+
+    final previousState = await future;
+    final newState = previousState.map((key, value) => MapEntry(key, key == category.uid ? category : value));
+    state = AsyncData(newState);
   }
 
   Future<Map<String, Category>> getAll() async {

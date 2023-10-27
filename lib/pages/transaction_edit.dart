@@ -25,10 +25,10 @@ class EditTransaction extends ConsumerWidget {
         child:  TransactionForm(
           transactionType: transaction.transactionType,
           initialTransaction: transaction,
-          commit: (t) {
-            ref.read(accountsProvider.notifier).add(t.from);
-            ref.read(accountsProvider.notifier).add(t.to);
-            ref.read(transactionsProvider.notifier).editTransaction(transaction.uid, t);
+          commit: (updatedTransaction) {
+            ref.read(accountsProvider.notifier).add(updatedTransaction.from);
+            ref.read(accountsProvider.notifier).add(updatedTransaction.to);
+            ref.read(transactionsProvider.notifier).editTransaction(updatedTransaction);
             Navigator.pop(context);
           },
         ),

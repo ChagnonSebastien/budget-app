@@ -75,9 +75,11 @@ class Transactions extends _$Transactions {
     state = AsyncData(newState);
   }
 
-  void editTransaction(String id, Transaction transaction) async {
+  void editTransaction(Transaction transaction) async {
+    await ref.read(transactionsPersistenceProvider.notifier).updateElement(transaction);
+
     final previousState = await future;
-    final newState = previousState.map((e) => e.uid == id ? transaction : e).toList();
+    final newState = previousState.map((e) => e.uid == transaction.uid ? transaction : e).toList();
     newState.sort((a, b) => a.date.compareTo(b.date));
     state = AsyncData(newState);
   }
