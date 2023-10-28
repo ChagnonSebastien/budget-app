@@ -7,9 +7,11 @@ class CategoryTree extends HookConsumerWidget {
   const CategoryTree({
     super.key,
     required this.onCategoryTap,
+    this.disabled,
   });
 
   final Function(Category category) onCategoryTap;
+  final String? disabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,6 +24,10 @@ class CategoryTree extends HookConsumerWidget {
     List<Widget> view = [];
 
     void exploreCategory(Category category, int level) {
+      if (category.uid == disabled) {
+        return;
+      }
+
       view.add(ListTile(
         contentPadding: EdgeInsets.only(left: level * 20, right: 20),
         leading: category.icon,
@@ -31,7 +37,8 @@ class CategoryTree extends HookConsumerWidget {
         },
       ));
 
-      var children = categories.value!.values.where((element) => element.parent == category.uid);
+      var children =
+          categories.value!.values.where((element) => element.parent == category.uid && element.uid != category.uid);
       for (var element in children) {
         exploreCategory(element, level + 1);
       }

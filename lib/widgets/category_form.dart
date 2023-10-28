@@ -9,10 +9,11 @@ import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CategoryForm extends HookConsumerWidget {
-  CategoryForm({super.key, required this.commit, this.initialCategory});
+  CategoryForm({super.key, required this.commit, this.initialCategory, required this.submitText});
 
   final Function(Category) commit;
   final Category? initialCategory;
+  final String submitText;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -53,10 +54,15 @@ class CategoryForm extends HookConsumerWidget {
                     endIndent: 20,
                     height: 0,
                   ),
-                  Expanded(child: CategoryTree(onCategoryTap: (tappedCategory) {
-                    parentCategory.value = tappedCategory;
-                    Navigator.pop(context);
-                  })),
+                  Expanded(
+                    child: CategoryTree(
+                      disabled: initialCategory?.uid,
+                      onCategoryTap: (tappedCategory) {
+                        parentCategory.value = tappedCategory;
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -193,52 +199,53 @@ class CategoryForm extends HookConsumerWidget {
           return null;
         },
       ),
-      Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
-        Container(
-          margin: const EdgeInsets.all(20),
-          child: Icon(
-            IconData(codepoint.value, fontFamily: 'MaterialIcons'),
-            size: 80,
-            color: color.value,
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MaterialButton(
-                onPressed: showIcons,
-                child: const Text('Select icon'),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 15, bottom: 15),
+            decoration: BoxDecoration(
+              border: Border.all(color: Color.fromARGB(255, 222, 222, 222), width: 2),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Container(
+              margin: const EdgeInsets.all(5),
+              child: Icon(
+                IconData(codepoint.value, fontFamily: 'MaterialIcons'),
+                size: 80,
+                color: color.value,
               ),
-              MaterialButton(
-                onPressed: showColorPicker,
-                child: const Text('Select color'),
-              ),
-            ],
+            ),
           ),
-        ),
-      ]),
-      SizedBox.fromSize(size: const Size.square(20)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MaterialButton(
+                  onPressed: showIcons,
+                  child: const Text('Icon'),
+                ),
+                MaterialButton(
+                  onPressed: showColorPicker,
+                  child: const Text('Color'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       FilledButton(
         onPressed: submit,
-        child: const Text('Create'),
+        child: Text(submitText),
       ),
     ]);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('New Category'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: formFields,
-          ),
-        ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: formFields,
       ),
     );
   }

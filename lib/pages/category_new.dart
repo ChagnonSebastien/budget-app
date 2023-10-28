@@ -10,9 +10,21 @@ class NewCategory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return CategoryForm(commit: (newCategory) {
-      ref.read(categoriesProvider.notifier).add(newCategory);
-      Navigator.pop(context);
-    });
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('New Category'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: CategoryForm(
+          commit: (newCategory) {
+            ref.read(categoriesProvider.notifier).add(newCategory);
+            Navigator.pop(context);
+          },
+          submitText: "Create",
+        ),
+      ),
+    );
   }
 }

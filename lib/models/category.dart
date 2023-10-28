@@ -58,6 +58,15 @@ class Categories extends _$Categories {
     state = AsyncData(newState);
   }
 
+  void delete(Category category) async {
+    await ref.read(categoriesPersistenceProvider.notifier).delete(category.uid);
+
+    final previousState = await future;
+    Map<String, Category> newState = Map.from(previousState);
+    newState.remove(category.uid);
+    state = AsyncData(newState);
+  }
+
   Future<Map<String, Category>> getAll() async {
     List<Category> items = await ref.read(categoriesPersistenceProvider.notifier).readAll();
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));

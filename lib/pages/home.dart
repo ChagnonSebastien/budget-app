@@ -6,10 +6,6 @@ import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/pages/account_list.dart';
 import 'package:flutter_hello_world/pages/category_list.dart';
 import 'package:flutter_hello_world/pages/transaction_list.dart';
-import 'package:flutter_hello_world/persistence/accounts.dart';
-import 'package:flutter_hello_world/persistence/categories.dart';
-import 'package:flutter_hello_world/persistence/currencies.dart';
-import 'package:flutter_hello_world/persistence/transactions.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -53,9 +49,9 @@ class Home extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedPageIndex = useState(0);
+    final selectedPageIndex = useState(2);
 
-    factoryResetDB() async  {
+    factoryResetDB() async {
       final populateTransactions = await ref.read(transactionsProvider.notifier).factoryReset();
       final populateCategories = await ref.read(categoriesProvider.notifier).factoryReset();
       final populateCurrencies = await ref.read(currenciesProvider.notifier).factoryReset();
@@ -113,7 +109,11 @@ class Home extends HookConsumerWidget {
           ),
         ],
       ),
-      body: pages[selectedPageIndex.value].widget(),
+      body: LayoutBuilder(
+          builder: (context, constraints) => SizedBox(
+              height: constraints.maxHeight,
+              width: constraints.maxWidth,
+              child: pages[selectedPageIndex.value].widget())),
     );
   }
 }

@@ -10,12 +10,34 @@ class EditCategory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return CategoryForm(
-      initialCategory: category,
-      commit: (editedCategory) {
-        ref.read(categoriesProvider.notifier).editCategory(editedCategory);
-        Navigator.pop(context);
-      },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Edit Category'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CategoryForm(
+              submitText: "Save",
+              initialCategory: category,
+              commit: (editedCategory) {
+                ref.read(categoriesProvider.notifier).editCategory(editedCategory);
+                Navigator.pop(context);
+              },
+            ),
+            OutlinedButton(
+              onPressed: () {
+                ref.read(categoriesProvider.notifier).delete(category);
+                Navigator.pop(context);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
