@@ -9,7 +9,6 @@ class Account extends Savable {
   Account({
     String? uid,
     required this.name,
-    this.initialAmount = 0,
     this.personal = false,
   }) {
     this.uid = uid ?? Uuid().v4();
@@ -19,7 +18,6 @@ class Account extends Savable {
   late final String uid;
 
   String name;
-  int initialAmount;
   final bool personal;
 }
 
@@ -50,7 +48,6 @@ class Accounts extends _$Accounts {
       // removing the item at oldIndex will shorten the list by 1.
       newIndex -= 1;
     }
-
   }
 
   Future<Account> withName(String name, {Account? orElse}) async {
@@ -58,7 +55,10 @@ class Accounts extends _$Accounts {
     if (orElse == null) {
       return futureValue.values.firstWhere((element) => element.name == name);
     }
-    return futureValue.values.firstWhere((element) => element.name == name, orElse: () => orElse,);
+    return futureValue.values.firstWhere(
+      (element) => element.name == name,
+      orElse: () => orElse,
+    );
   }
 
   Future<Map<String, Account>> getAll() async {
@@ -66,13 +66,19 @@ class Accounts extends _$Accounts {
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
   }
 
-  Future<Function> factoryReset() async {
-    await ref.read(accountsPersistenceProvider.notifier).deleteAll();
+  Future<void> factoryReset() async {
+    await ref.read(accountsPersistenceProvider.notifier).init();
+    await ref.read(accountsPersistenceProvider.notifier).populateData();
+    state = AsyncData(await getAll());
+  }
 
-    return () async {
-      await ref.read(accountsPersistenceProvider.notifier).populateData();
-      state = AsyncData(await getAll());
-    };
+  void updateAccount(Account updatedAccount) async {
+    await ref.read(accountsPersistenceProvider.notifier).updateElement(updatedAccount);
+
+    final previousState = await future;
+    final newState =
+        previousState.map((key, value) => MapEntry(key, key == updatedAccount.uid ? updatedAccount : value));
+    state = AsyncData(newState);
   }
 }
 

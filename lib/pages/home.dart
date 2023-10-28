@@ -5,7 +5,8 @@ import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/pages/account_list.dart';
 import 'package:flutter_hello_world/pages/category_list.dart';
-import 'package:flutter_hello_world/pages/transaction_list.dart';
+import 'package:flutter_hello_world/pages/transaction_view.dart';
+import 'package:flutter_hello_world/persistence/persistence.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -51,15 +52,12 @@ class Home extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedPageIndex = useState(2);
 
-    factoryResetDB() async {
-      final populateTransactions = await ref.read(transactionsProvider.notifier).factoryReset();
-      final populateCategories = await ref.read(categoriesProvider.notifier).factoryReset();
-      final populateCurrencies = await ref.read(currenciesProvider.notifier).factoryReset();
-      final populateAccounts = await ref.read(accountsProvider.notifier).factoryReset();
-      await populateAccounts();
-      await populateCurrencies();
-      await populateCategories();
-      await populateTransactions();
+    Future<void> factoryResetDB() async {
+      await ref.read(localDBProvider.notifier).factoryReset();
+      await ref.read(accountsProvider.notifier).factoryReset();
+      await ref.read(currenciesProvider.notifier).factoryReset();
+      await ref.read(categoriesProvider.notifier).factoryReset();
+      await ref.read(transactionsProvider.notifier).factoryReset();
     }
 
     return Scaffold(
@@ -74,7 +72,7 @@ class Home extends HookConsumerWidget {
           } else if (value == 3) {
             // TODO: Settings page
           } else if (value == 4) {
-            print("HAIMDALL factory reset");
+            print("HEIMDALL factory reset");
             factoryResetDB();
           }
           Navigator.pop(context);

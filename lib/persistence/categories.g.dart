@@ -7,7 +7,7 @@ part of 'categories.dart';
 // **************************************************************************
 
 String _$categoriesPersistenceHash() =>
-    r'0dd97ab51786bf875f6fe330e19d33bbde168eae';
+    r'b30a97c85f1ba79a3e072eea7c32ad42bf1ebb6f';
 
 /// See also [CategoriesPersistence].
 @ProviderFor(CategoriesPersistence)

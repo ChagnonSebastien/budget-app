@@ -72,12 +72,9 @@ class Categories extends _$Categories {
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
   }
 
-  Future<Function> factoryReset() async {
-    await ref.read(categoriesPersistenceProvider.notifier).deleteAll();
-
-    return () async {
-      await ref.read(categoriesPersistenceProvider.notifier).populateData();
-      state = AsyncData(await getAll());
-    };
+  Future<void> factoryReset() async {
+    await ref.read(categoriesPersistenceProvider.notifier).init();
+    await ref.read(categoriesPersistenceProvider.notifier).populateData();
+    state = AsyncData(await getAll());
   }
 }

@@ -17,7 +17,7 @@ class CategoryTree extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var categories = ref.watch(categoriesProvider);
 
-    if (!categories.hasValue) {
+    if (!categories.hasValue || !categories.value!.containsKey(rootCategoryUid)) {
       return Loading();
     }
 

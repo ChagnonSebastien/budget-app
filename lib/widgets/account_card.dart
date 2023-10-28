@@ -1,20 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/account.dart';
+import 'package:flutter_hello_world/models/currency.dart';
+import 'package:flutter_hello_world/models/transaction.dart';
+import 'package:flutter_hello_world/widgets/loading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-class AccountCard extends StatelessWidget  {
+class AccountCard extends ConsumerWidget {
   const AccountCard({
     super.key,
     required this.account,
-    this.textSize = 11,
   });
-  
+
   final Account account;
-  final double textSize;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactions = ref.watch(transactionsProvider);
 
+    if (!transactions.hasValue) {
+      return Loading();
+    }
+
+    final currencyAmounts = Map<Currency, int>();
+
+    for (var transaction in transactions.value!) {
+      int amount = 0;
+      if (transaction.from?.uid == account.uid) {
+        amount = -transaction.amount;
+      }
+
+      if (transaction.to.uid == account.uid) {
+        amount = transaction.amount;
+      }
+
+      if (amount != 0) {
+        currencyAmounts.update(transaction.currency, (value) => value + amount, ifAbsent: () => amount);
+      }
+    }
+
+    var accountContents = currencyAmounts.entries.map<Widget>((entry) {
+      return Text(entry.key.formatFull(entry.value));
+    }).toList();
 
     return Card(
       child: Padding(
@@ -22,8 +48,8 @@ class AccountCard extends StatelessWidget  {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(account.name),
-            Expanded(child: Container()),
+            Expanded(child: Text(account.name)),
+            Column(children: accountContents),
           ],
         ),
       ),

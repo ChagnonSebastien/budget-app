@@ -20,7 +20,7 @@ String _LABEL_PARENT = "parent";
 @Riverpod(keepAlive: true)
 class CategoriesPersistence extends _$CategoriesPersistence with Crud<Category> {
   @override
-  Future<Database> build() => ref.watch(databaseProvider.future);
+  Future<Database> build() => ref.watch(localDBProvider.future);
 
   @override
   String getTableName() => LABEL_CATEGORIES;
@@ -73,7 +73,7 @@ class CategoriesPersistence extends _$CategoriesPersistence with Crud<Category> 
         );
       ''');
   }
-  
+
   @override
   Future<void> populateData() async {
     await Future.wait(Defaults.categories.asMap().values.map((e) => create(e)));

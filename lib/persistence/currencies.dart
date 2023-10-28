@@ -15,7 +15,7 @@ String _LABEL_SHOW_SYMBOL_BEFORE_AMOUNT = "showSymbolBeforeAmount";
 @Riverpod(keepAlive: true)
 class CurrenciesPersistence extends _$CurrenciesPersistence with Crud<Currency> {
   @override
-  Future<Database> build() => ref.watch(databaseProvider.future);
+  Future<Database> build() => ref.watch(localDBProvider.future);
 
   @override
   String getTableName() => LABEL_TABLE_CURRENCIES;
@@ -54,10 +54,8 @@ class CurrenciesPersistence extends _$CurrenciesPersistence with Crud<Currency> 
           PRIMARY KEY ($LABEL_UID)
         );
       ''');
-
-    await Future.wait(Defaults.currencies.asList().map((e) => create(e)));
   }
-  
+
   @override
   Future<void> populateData() async {
     await Future.wait(Defaults.currencies.asList().map((e) => create(e)));

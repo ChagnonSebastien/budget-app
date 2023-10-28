@@ -24,7 +24,7 @@ String _LABEL_NOTE = "note";
 @Riverpod(keepAlive: true)
 class TransactionsPersistence extends _$TransactionsPersistence with Crud<Transaction> {
   @override
-  Future<sql.Database> build() => ref.watch(databaseProvider.future);
+  Future<sql.Database> build() => ref.watch(localDBProvider.future);
 
   @override
   String getTableName() => LABEL_TRANSACTIONS;
@@ -35,10 +35,10 @@ class TransactionsPersistence extends _$TransactionsPersistence with Crud<Transa
       LABEL_UID: element.uid,
       _LABEL_AMOUNT: element.amount,
       _LABEL_CURRENCY: element.currency.uid,
-      _LABEL_FROM_ACCOUNT: element.from.uid,
+      _LABEL_FROM_ACCOUNT: element.from?.uid,
       _LABEL_TO_ACCOUNT: element.to.uid,
       _LABEL_DATE: element.date.microsecondsSinceEpoch,
-      _LABEL_CATEGORY: element.category.uid,
+      _LABEL_CATEGORY: element.category?.uid,
       _LABEL_NOTE: element.note,
     };
   }
@@ -52,10 +52,10 @@ class TransactionsPersistence extends _$TransactionsPersistence with Crud<Transa
     return Transaction(
       uid: json[LABEL_UID],
       amount: json[_LABEL_AMOUNT],
-      from: accounts[json[_LABEL_FROM_ACCOUNT]]!,
+      from: accounts[json[_LABEL_FROM_ACCOUNT]],
       to: accounts[json[_LABEL_TO_ACCOUNT]]!,
       date: DateTime.fromMicrosecondsSinceEpoch(json[_LABEL_DATE]),
-      category: categories[json[_LABEL_CATEGORY]]!,
+      category: categories[json[_LABEL_CATEGORY]],
       currency: currencies[json[_LABEL_CURRENCY]]!,
       note: json[_LABEL_NOTE],
     );
@@ -71,9 +71,9 @@ class TransactionsPersistence extends _$TransactionsPersistence with Crud<Transa
           $_LABEL_DATE INT NOT NULL,
           $_LABEL_NOTE VARCHAR(255),
           $_LABEL_CURRENCY VARCHAR(36) NOT NULL,
-          $_LABEL_FROM_ACCOUNT VARCHAR(36) NOT NULL,
+          $_LABEL_FROM_ACCOUNT VARCHAR(36),
           $_LABEL_TO_ACCOUNT VARCHAR(36) NOT NULL,
-          $_LABEL_CATEGORY VARCHAR(36) NOT NULL,
+          $_LABEL_CATEGORY VARCHAR(36),
           PRIMARY KEY ($LABEL_UID),
           FOREIGN KEY ($_LABEL_CURRENCY) REFERENCES $LABEL_TABLE_CURRENCIES($LABEL_UID),
           FOREIGN KEY ($_LABEL_FROM_ACCOUNT) REFERENCES $LABEL_ACCOUNTS($LABEL_UID),
@@ -82,7 +82,7 @@ class TransactionsPersistence extends _$TransactionsPersistence with Crud<Transa
         );
       ''');
   }
-  
+
   @override
   Future<void> populateData() async {
     await Future.wait(Defaults.transactions.asList().map((e) => create(e)));

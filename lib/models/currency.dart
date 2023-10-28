@@ -50,12 +50,9 @@ class Currencies extends _$Currencies {
     return Map.fromEntries(items.map((e) => MapEntry(e.uid, e)));
   }
 
-  Future<Function> factoryReset() async {
-    await ref.read(currenciesPersistenceProvider.notifier).deleteAll();
-
-    return () async {
-      await ref.read(currenciesPersistenceProvider.notifier).populateData();
-      state = AsyncData(await getAll());
-    };
+  Future<void> factoryReset() async {
+    await ref.read(currenciesPersistenceProvider.notifier).init();
+    await ref.read(currenciesPersistenceProvider.notifier).populateData();
+    state = AsyncData(await getAll());
   }
 }

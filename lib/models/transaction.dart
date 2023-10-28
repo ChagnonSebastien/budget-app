@@ -1,23 +1,33 @@
-import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/savable.dart';
 import 'package:flutter_hello_world/persistence/transactions.dart';
-import 'package:flutter_hello_world/widgets/transaction_form.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 part 'transaction.g.dart';
 
+enum TransactionType {
+  expense(mustBeFromMine: true, mustBeToMine: false),
+  income(mustBeFromMine: false, mustBeToMine: true),
+  transfer(mustBeFromMine: true, mustBeToMine: true),
+  initial(mustBeFromMine: false, mustBeToMine: true);
+
+  const TransactionType({required this.mustBeFromMine, required this.mustBeToMine});
+
+  final bool mustBeFromMine;
+  final bool mustBeToMine;
+}
+
 class Transaction extends Savable {
   Transaction({
     String? uid,
     required this.amount,
-    required this.from,
+    this.from,
     required this.to,
     required this.date,
-    required this.category,
+    this.category,
     required this.currency,
     this.note,
   }) {
@@ -28,15 +38,18 @@ class Transaction extends Savable {
   late final String uid;
 
   int amount;
-  Account from;
+  Account? from;
   Account to;
   DateTime date;
-  Category category;
+  Category? category;
   Currency currency;
   String? note;
 
   TransactionType get transactionType {
-    if (!from.personal) {
+    if (from == null) {
+      return TransactionType.initial;
+    }
+    if (!from!.personal) {
       return TransactionType.income;
     } else if (!to.personal) {
       return TransactionType.expense;
@@ -92,17 +105,14 @@ class Transactions extends _$Transactions {
   }
 
   Future<List<Transaction>> getAll() async {
-    final items =  await ref.read(transactionsPersistenceProvider.notifier).readAll();
+    final items = await ref.read(transactionsPersistenceProvider.notifier).readAll();
     items.sort((a, b) => a.date.compareTo(b.date));
     return items;
   }
 
-  Future<Function> factoryReset() async {
-    await ref.read(transactionsPersistenceProvider.notifier).deleteAll();
-
-    return () async {
-      await ref.read(transactionsPersistenceProvider.notifier).populateData();
-      state = AsyncData(await getAll());
-    };
+  Future<void> factoryReset() async {
+    await ref.read(transactionsPersistenceProvider.notifier).init();
+    await ref.read(transactionsPersistenceProvider.notifier).populateData();
+    state = AsyncData(await getAll());
   }
 }

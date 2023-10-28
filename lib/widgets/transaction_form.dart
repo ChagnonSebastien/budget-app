@@ -11,17 +11,6 @@ import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-enum TransactionType {
-  expense(mustBeFromMine: true, mustBeToMine: false),
-  income(mustBeFromMine: false, mustBeToMine: true),
-  transfer(mustBeFromMine: true, mustBeToMine: true);
-
-  const TransactionType({required this.mustBeFromMine, required this.mustBeToMine});
-
-  final bool mustBeFromMine;
-  final bool mustBeToMine;
-}
-
 class TransactionForm extends HookConsumerWidget {
   TransactionForm({
     super.key,
@@ -38,7 +27,7 @@ class TransactionForm extends HookConsumerWidget {
 
   late final _amountController = TextEditingController(text: initialTransaction?.amountNumber ?? '');
   late final _currencyController = TextEditingController(text: initialTransaction?.currency.name ?? '');
-  late final _fromAccountController = TextEditingController(text: initialTransaction?.from.name ?? '');
+  late final _fromAccountController = TextEditingController(text: initialTransaction?.from?.name ?? '');
   late final _toAccountController = TextEditingController(text: initialTransaction?.to.name ?? '');
   late final _noteController = TextEditingController(text: initialTransaction?.note ?? '');
   late final _dateController =
@@ -67,11 +56,13 @@ class TransactionForm extends HookConsumerWidget {
         final accountsNotifier = ref.read(accountsProvider.notifier);
         if (transactionType.mustBeFromMine) {
           from = await accountsNotifier.withName(_fromAccountController.text);
-          to = await accountsNotifier.withName(_toAccountController.text, orElse: Account(name: _toAccountController.text));
+          to = await accountsNotifier.withName(_toAccountController.text,
+              orElse: Account(name: _toAccountController.text));
           ref.read(accountsProvider.notifier).add(to);
         } else {
           to = await accountsNotifier.withName(_toAccountController.text);
-          from = await accountsNotifier.withName(_fromAccountController.text, orElse: Account(name: _fromAccountController.text));
+          from = await accountsNotifier.withName(_fromAccountController.text,
+              orElse: Account(name: _fromAccountController.text));
           ref.read(accountsProvider.notifier).add(from);
         }
 
