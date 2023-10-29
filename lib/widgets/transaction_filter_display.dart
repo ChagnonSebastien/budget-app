@@ -13,24 +13,6 @@ class TransactionFilterDisplay extends HookConsumerWidget {
 
   final _formKey = GlobalKey<FormState>();
 
-  final labelFormat = TextStyle(
-    fontSize: 12,
-    color: Colors.black,
-    fontStyle: FontStyle.normal,
-  );
-
-  final emptyValueFormat = TextStyle(
-    fontSize: 12,
-    color: Color.fromARGB(255, 200, 200, 200),
-    fontStyle: FontStyle.italic,
-  );
-
-  final valueFormat = TextStyle(
-    fontSize: 12,
-    color: Color.fromARGB(255, 100, 100, 150),
-    fontStyle: FontStyle.italic,
-  );
-
   final filterController = TextEditingController();
   final fromAccountController = TextEditingController();
   final toAccountController = TextEditingController();
@@ -45,11 +27,29 @@ class TransactionFilterDisplay extends HookConsumerWidget {
       return Loading();
     }
 
+    final labelFormat = TextStyle(
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    );
+
+    final emptyValueFormat = TextStyle(
+      fontSize: 12,
+      color: Theme.of(context).colorScheme.surfaceTint,
+      fontStyle: FontStyle.italic,
+    );
+
+    final valueFormat = TextStyle(
+      fontSize: 12,
+      color: Theme.of(context).colorScheme.primary,
+      fontStyle: FontStyle.italic,
+    );
+
     displayFilters() {
       showDialog(
         context: context,
         builder: (context) {
           return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: EdgeInsets.all(10),
               child: TransactionFilterEditor(),
@@ -60,6 +60,7 @@ class TransactionFilterDisplay extends HookConsumerWidget {
     }
 
     return GFCard(
+      color: Theme.of(context).colorScheme.secondaryContainer,
       margin: EdgeInsets.zero,
       padding: EdgeInsets.all(5),
       shape: Border(),

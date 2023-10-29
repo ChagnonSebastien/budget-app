@@ -4,6 +4,7 @@ import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:getwidget/components/card/gf_card.dart';
 
 class AccountCard extends ConsumerWidget {
   const AccountCard({
@@ -43,19 +44,18 @@ class AccountCard extends ConsumerWidget {
       return Text(currencies.value![entry.key]!.formatFull(entry.value));
     }).toList();
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(child: Text(account.name)),
-            Column(
-              children: accountContents,
-              crossAxisAlignment: CrossAxisAlignment.end,
-            ),
-          ],
-        ),
+    return GFCard(
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(10),
+      content: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(child: Text(account.name)),
+          Column(
+            children: accountContents,
+            crossAxisAlignment: CrossAxisAlignment.end,
+          ),
+        ],
       ),
     );
   }

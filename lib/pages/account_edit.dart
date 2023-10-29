@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/widgets/account_form.dart';
+import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditAccount extends ConsumerWidget {
@@ -12,8 +13,7 @@ class EditAccount extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: GFAppBar(
         title: const Text('Edit Account'),
       ),
       body: Padding(

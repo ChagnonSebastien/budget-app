@@ -56,6 +56,7 @@ class AccountForm extends HookConsumerWidget {
         context: context,
         builder: (context) {
           return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 20),
               child: Column(

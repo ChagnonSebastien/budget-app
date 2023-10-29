@@ -11,12 +11,13 @@ class MyAccounts extends ConsumerWidget {
     return Scaffold(
       body: AccountsList(),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const NewAccount();
           }));
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/widgets/category_form.dart';
+import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NewCategory extends ConsumerWidget {
@@ -11,8 +12,7 @@ class NewCategory extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: GFAppBar(
         title: const Text('New Category'),
       ),
       body: Padding(

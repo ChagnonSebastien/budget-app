@@ -8,6 +8,7 @@ import 'package:flutter_hello_world/pages/category_list.dart';
 import 'package:flutter_hello_world/pages/transaction_view.dart';
 import 'package:flutter_hello_world/persistence/persistence.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Page {
@@ -61,9 +62,8 @@ class Home extends HookConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: GFAppBar(
         title: Text(pages[selectedPageIndex.value].name),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       drawer: NavigationDrawer(
         onDestinationSelected: (value) {
@@ -108,7 +108,6 @@ class Home extends HookConsumerWidget {
         ],
       ),
       body: Container(
-        color: Color.fromARGB(255, 244, 244, 244),
         child: pages[selectedPageIndex.value].widget(),
       ),
     );

@@ -16,12 +16,13 @@ class MyCategories extends ConsumerWidget {
         }));
       }),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return NewCategory();
           }));
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

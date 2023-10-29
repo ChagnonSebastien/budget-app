@@ -78,6 +78,7 @@ class TransactionCard extends StatelessWidget {
     }
 
     return GFCard(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(3))),
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),
       content: Row(

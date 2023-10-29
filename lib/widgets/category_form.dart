@@ -6,6 +6,8 @@ import 'package:flutter_hello_world/widgets/category_tree.dart';
 import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
+import 'package:getwidget/components/button/gf_button.dart';
+import 'package:getwidget/components/card/gf_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CategoryForm extends HookConsumerWidget {
@@ -42,6 +44,7 @@ class CategoryForm extends HookConsumerWidget {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
               child: Column(
@@ -76,6 +79,7 @@ class CategoryForm extends HookConsumerWidget {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: HookConsumer(
               builder: (context, ref, child) {
                 final iconFilter = useState("");
@@ -132,6 +136,7 @@ class CategoryForm extends HookConsumerWidget {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -201,36 +206,39 @@ class CategoryForm extends HookConsumerWidget {
       ),
       Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 15, bottom: 15),
-            decoration: BoxDecoration(
-              border: Border.all(color: Color.fromARGB(255, 222, 222, 222), width: 2),
-              borderRadius: BorderRadius.circular(5),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                GFButton(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  textColor: Theme.of(context).primaryColor,
+                  onPressed: showIcons,
+                  child: const Text('Icon'),
+                ),
+                GFButton(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  textColor: Theme.of(context).primaryColor,
+                  onPressed: showColorPicker,
+                  child: const Text('Color'),
+                ),
+              ],
             ),
-            child: Container(
+          ),
+          SizedBox.square(dimension: 20),
+          GFCard(
+            margin: const EdgeInsets.only(top: 15, bottom: 15),
+            content: Container(
               margin: const EdgeInsets.all(5),
               child: Icon(
                 IconData(codepoint.value, fontFamily: 'MaterialIcons'),
                 size: 80,
                 color: color.value,
               ),
-            ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MaterialButton(
-                  onPressed: showIcons,
-                  child: const Text('Icon'),
-                ),
-                MaterialButton(
-                  onPressed: showColorPicker,
-                  child: const Text('Color'),
-                ),
-              ],
             ),
           ),
         ],

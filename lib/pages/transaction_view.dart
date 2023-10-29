@@ -79,6 +79,7 @@ class MyTransactions extends ConsumerWidget {
         ),
       ]),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const NewTransaction(
@@ -86,7 +87,7 @@ class MyTransactions extends ConsumerWidget {
             );
           }));
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

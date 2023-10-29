@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/widgets/transaction_form.dart';
+import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditTransaction extends ConsumerWidget {
@@ -15,8 +16,7 @@ class EditTransaction extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: GFAppBar(
         title: const Text('Edit Transaction'),
       ),
       body: SingleChildScrollView(

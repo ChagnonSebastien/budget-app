@@ -17,7 +17,11 @@ class BudgetApp extends HookWidget {
     return MaterialApp(
       title: 'Budget App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 41, 60, 167)),
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.light,
+          seedColor: Colors.teal,
+          background: Color.fromARGB(255, 245, 245, 245),
+        ),
         useMaterial3: true,
       ),
       home: const Home(),
