@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/default_data.dart';
 import 'package:flutter_hello_world/models/account.dart';
@@ -68,7 +66,7 @@ class TransactionForm extends HookConsumerWidget {
 
         var newTransaction = Transaction(
           uid: initialTransaction?.uid,
-          amount: (double.parse(_amountController.text) * pow(10, currency.decimals)).floor(),
+          amount: currency.parseNumber(_amountController.text),
           from: from,
           to: to,
           date: date.value,

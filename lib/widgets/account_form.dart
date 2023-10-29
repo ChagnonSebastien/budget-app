@@ -10,7 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class AccountForm extends HookConsumerWidget {
   AccountForm({super.key, required this.commit, this.initialAccount, required this.submitText});
 
-  final Function(Account) commit;
+  final Function(Account, Map<String, int>) commit;
   final Account? initialAccount;
   final String submitText;
 
@@ -31,21 +31,23 @@ class AccountForm extends HookConsumerWidget {
     final existingInitialTransactions = transactions.value!.where((transaction) =>
         transaction.transactionType == TransactionType.initial && transaction.to.uid == initialAccount?.uid);
 
-    final initialAmounts = useState(Map.fromEntries(currencies.value!.values.map((currency) => MapEntry(
-        currency,
-        existingInitialTransactions
-            .where((element) => element.currency.uid == currency.uid)
-            .map((e) => TextEditingController(text: e.amountNumber))
-            .firstOrNull))));
-
-    print("HEIMDALL");
-    print(existingInitialTransactions);
-    print(initialAmounts);
+    final initialAmounts = useState(Map.fromEntries(currencies.value!.values.map((currency) {
+      return MapEntry(
+          currency,
+          existingInitialTransactions
+              .where((element) => element.currency.uid == currency.uid)
+              .map((e) => TextEditingController(text: e.amountNumber))
+              .firstOrNull);
+    })));
 
     void submit() {
       if (_formKey.currentState!.validate()) {
-        var newAccount = Account(name: _nameController.text);
-        commit(newAccount);
+        var newAccount = Account(uid: initialAccount?.uid, name: _nameController.text, personal: true);
+        commit(
+            newAccount,
+            Map.fromEntries(initialAmounts.value.entries
+                .where((element) => element.value != null)
+                .map((entry) => MapEntry(entry.key.uid, entry.key.parseNumber(entry.value!.text)))));
       }
     }
 
@@ -54,18 +56,30 @@ class AccountForm extends HookConsumerWidget {
         context: context,
         builder: (context) {
           return Dialog(
-            child: ListView(
-              children: initialAmounts.value.entries
-                  .where((element) => element.value == null)
-                  .map((e) => ListTile(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Currencies"),
+                  ListView(
+                    shrinkWrap: true,
+                    children: initialAmounts.value.entries.where((element) {
+                      return element.value == null;
+                    }).map((e) {
+                      return ListTile(
                         title: Text(e.key.name),
                         onTap: () {
-                          initialAmounts.value = initialAmounts.value.map(
-                              (key, value) => MapEntry(key, key.uid == e.key.uid ? TextEditingController() : value));
+                          initialAmounts.value = initialAmounts.value.map((key, value) {
+                            return MapEntry(key, key.uid == e.key.uid ? TextEditingController() : value);
+                          });
                           Navigator.pop(context);
                         },
-                      ))
-                  .toList(),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -104,14 +118,16 @@ class AccountForm extends HookConsumerWidget {
             children: [
               Expanded(child: Text("Initial Amounts", style: TextStyle(color: Theme.of(context).primaryColor))),
               OutlinedButton(
-                onPressed: newCategory,
+                onPressed: initialAmounts.value.values.contains(null) ? newCategory : null,
                 child: Text("New"),
               ),
             ],
           ),
           Flexible(
             child: Column(
-              children: initialAmounts.value.entries.where((element) => element.value != null).map((e) {
+              children: initialAmounts.value.entries.where((element) {
+                return element.value != null;
+              }).map((e) {
                 return Row(children: [
                   Flexible(
                     child: TextFormField(
@@ -124,7 +140,7 @@ class AccountForm extends HookConsumerWidget {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter the transaction value';
+                          return 'Please enter an amount';
                         }
                         double? amount = double.tryParse(value);
                         if (amount == null) {
@@ -136,11 +152,13 @@ class AccountForm extends HookConsumerWidget {
                   ),
                   SizedBox.fromSize(size: const Size.square(20)),
                   IconButton(
-                      onPressed: () {
-                        initialAmounts.value = initialAmounts.value
-                            .map((key, value) => MapEntry(key, key.uid == e.key.uid ? null : value));
-                      },
-                      icon: Icon(Icons.close)),
+                    onPressed: () {
+                      initialAmounts.value = initialAmounts.value.map((key, value) {
+                        return MapEntry(key, key.uid == e.key.uid ? null : value);
+                      });
+                    },
+                    icon: Icon(Icons.close),
+                  ),
                 ]);
               }).toList(),
             ),

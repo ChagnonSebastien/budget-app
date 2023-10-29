@@ -6,8 +6,8 @@ import 'package:flutter_hello_world/widgets/account_card.dart';
 import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MyAccounts extends ConsumerWidget {
-  const MyAccounts({super.key});
+class AccountsList extends ConsumerWidget {
+  const AccountsList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

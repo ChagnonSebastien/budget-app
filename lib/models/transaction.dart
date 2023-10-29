@@ -71,6 +71,11 @@ class Transaction extends Savable {
     }
     return currency.formatFull(amount);
   }
+
+  @override
+  String toString() {
+    return "${currency.formatFull(amount)} to ${to.name}";
+  }
 }
 
 @riverpod
@@ -114,5 +119,45 @@ class Transactions extends _$Transactions {
     await ref.read(transactionsPersistenceProvider.notifier).init();
     await ref.read(transactionsPersistenceProvider.notifier).populateData();
     state = AsyncData(await getAll());
+  }
+
+  Future<void> overwriteInitialAmounts(Account account, Map<String, int> newInitialAmounts) async {
+    final previousState = await future;
+    final currencies = await ref.read(currenciesProvider.future);
+
+    final existingInitialAmounts = Map.fromEntries(previousState.where((transaction) {
+      return transaction.transactionType == TransactionType.initial && transaction.to.uid == account.uid;
+    }).map((e) => MapEntry(e.currency.uid, e)));
+
+    existingInitialAmounts.forEach((currencyId, transaction) {
+      if (!newInitialAmounts.containsKey(currencyId)) {
+        ref.read(transactionsPersistenceProvider.notifier).delete(transaction.uid);
+      }
+    });
+
+    var newState = previousState.where((transaction) {
+      return transaction.transactionType != TransactionType.initial ||
+          transaction.to.uid != account.uid ||
+          newInitialAmounts.containsKey(transaction.currency.uid);
+    }).toList();
+
+    for (final entry in newInitialAmounts.entries) {
+      if (!existingInitialAmounts.containsKey(entry.key)) {
+        var newTransaction = Transaction(
+          amount: entry.value,
+          to: account,
+          date: DateTime.fromMillisecondsSinceEpoch(0),
+          currency: currencies[entry.key]!,
+        );
+        await ref.read(transactionsPersistenceProvider.notifier).create(newTransaction);
+        newState.add(newTransaction);
+      } else if (entry.value != existingInitialAmounts[entry.key]!.amount) {
+        existingInitialAmounts[entry.key]!.amount = entry.value;
+        await ref.read(transactionsPersistenceProvider.notifier).updateElement(existingInitialAmounts[entry.key]!);
+      }
+    }
+
+    state = AsyncData(newState);
+    this.ref.notifyListeners();
   }
 }

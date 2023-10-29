@@ -4,10 +4,8 @@ import 'package:flutter_hello_world/models/transaction.dart';
 import 'package:flutter_hello_world/widgets/account_form.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class EditAccount extends ConsumerWidget {
-  const EditAccount({super.key, required this.account});
-
-  final Account account;
+class NewAccount extends ConsumerWidget {
+  const NewAccount({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,11 +17,10 @@ class EditAccount extends ConsumerWidget {
       body: Padding(
         padding: EdgeInsets.all(20),
         child: AccountForm(
-          initialAccount: account,
-          submitText: "Save",
-          commit: (updatedAccount, initialAmounts) {
-            ref.read(accountsProvider.notifier).updateAccount(updatedAccount);
-            ref.read(transactionsProvider.notifier).overwriteInitialAmounts(account, initialAmounts);
+          submitText: "Create",
+          commit: (newAccount, initialAmounts) async {
+            await ref.read(accountsProvider.notifier).create(newAccount);
+            ref.read(transactionsProvider.notifier).overwriteInitialAmounts(newAccount, initialAmounts);
             Navigator.pop(context);
           },
         ),

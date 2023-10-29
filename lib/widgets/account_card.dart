@@ -16,12 +16,13 @@ class AccountCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transactions = ref.watch(transactionsProvider);
+    final currencies = ref.watch(currenciesProvider);
 
-    if (!transactions.hasValue) {
+    if (!transactions.hasValue || !currencies.hasValue) {
       return Loading();
     }
 
-    final currencyAmounts = Map<Currency, int>();
+    final currencyAmounts = Map<String, int>();
 
     for (var transaction in transactions.value!) {
       int amount = 0;
@@ -34,12 +35,12 @@ class AccountCard extends ConsumerWidget {
       }
 
       if (amount != 0) {
-        currencyAmounts.update(transaction.currency, (value) => value + amount, ifAbsent: () => amount);
+        currencyAmounts.update(transaction.currency.uid, (value) => value + amount, ifAbsent: () => amount);
       }
     }
 
     var accountContents = currencyAmounts.entries.map<Widget>((entry) {
-      return Text(entry.key.formatFull(entry.value));
+      return Text(currencies.value![entry.key]!.formatFull(entry.value));
     }).toList();
 
     return Card(
@@ -49,7 +50,10 @@ class AccountCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(child: Text(account.name)),
-            Column(children: accountContents),
+            Column(
+              children: accountContents,
+              crossAxisAlignment: CrossAxisAlignment.end,
+            ),
           ],
         ),
       ),

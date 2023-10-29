@@ -80,6 +80,14 @@ class Accounts extends _$Accounts {
         previousState.map((key, value) => MapEntry(key, key == updatedAccount.uid ? updatedAccount : value));
     state = AsyncData(newState);
   }
+
+  Future<void> create(Account newAccount) async {
+    await ref.read(accountsPersistenceProvider.notifier).create(newAccount);
+
+    final previousState = await future;
+    final newState = {...previousState, newAccount.uid: newAccount};
+    state = AsyncData(newState);
+  }
 }
 
 @riverpod

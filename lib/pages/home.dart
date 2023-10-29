@@ -3,7 +3,7 @@ import 'package:flutter_hello_world/models/account.dart';
 import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/currency.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
-import 'package:flutter_hello_world/pages/account_list.dart';
+import 'package:flutter_hello_world/pages/account_view.dart';
 import 'package:flutter_hello_world/pages/category_list.dart';
 import 'package:flutter_hello_world/pages/transaction_view.dart';
 import 'package:flutter_hello_world/persistence/persistence.dart';
@@ -50,7 +50,7 @@ class Home extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedPageIndex = useState(2);
+    final selectedPageIndex = useState(1);
 
     Future<void> factoryResetDB() async {
       await ref.read(localDBProvider.notifier).factoryReset();

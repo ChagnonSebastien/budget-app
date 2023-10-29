@@ -30,6 +30,10 @@ class Currency extends Savable {
     return (amount / pow(10, decimals)).toStringAsFixed(decimals);
   }
 
+  int parseNumber(String value) {
+    return (double.parse(value) * pow(10, decimals)).floor();
+  }
+
   String formatFull(int amount) {
     String prefix = showSymbolBeforeAmount ? '${symbol} ' : '';
     String suffix = showSymbolBeforeAmount ? '' : ' ${symbol}';
