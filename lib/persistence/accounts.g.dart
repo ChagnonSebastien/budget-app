@@ -7,7 +7,7 @@ part of 'accounts.dart';
 // **************************************************************************
 
 String _$accountsPersistenceHash() =>
-    r'f3a7872fcca5f1dbc33024dc596793e6c3723c32';
+    r'9818e618a1bac81d506700c75b91151298bad00a';
 
 /// See also [AccountsPersistence].
 @ProviderFor(AccountsPersistence)
@@ -24,4 +24,4 @@ final accountsPersistenceProvider =
 
 typedef _$AccountsPersistence = AsyncNotifier<Database>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, inference_failure_on_uninitialized_variable, inference_failure_on_function_return_type, inference_failure_on_untyped_parameter
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, inference_failure_on_uninitialized_variable, inference_failure_on_function_return_type, inference_failure_on_untyped_parameter, deprecated_member_use_from_same_package

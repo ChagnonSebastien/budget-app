@@ -50,7 +50,7 @@ class Home extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedPageIndex = useState(1);
+    final selectedPageIndex = useState(0);
 
     Future<void> factoryResetDB() async {
       await ref.read(localDBProvider.notifier).factoryReset();
@@ -107,11 +107,10 @@ class Home extends HookConsumerWidget {
           ),
         ],
       ),
-      body: LayoutBuilder(
-          builder: (context, constraints) => SizedBox(
-              height: constraints.maxHeight,
-              width: constraints.maxWidth,
-              child: pages[selectedPageIndex.value].widget())),
+      body: Container(
+        color: Color.fromARGB(255, 244, 244, 244),
+        child: pages[selectedPageIndex.value].widget(),
+      ),
     );
   }
 }

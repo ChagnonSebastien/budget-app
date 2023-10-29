@@ -5,6 +5,7 @@ import 'package:flutter_hello_world/pages/transaction_new.dart';
 import 'package:flutter_hello_world/utils.dart';
 import 'package:flutter_hello_world/widgets/loading.dart';
 import 'package:flutter_hello_world/widgets/transaction_card.dart';
+import 'package:flutter_hello_world/widgets/transaction_filter_display.dart';
 import 'package:flutter_hello_world/widgets/transaction_list.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -65,14 +66,18 @@ class MyTransactions extends ConsumerWidget {
 
     return Scaffold(
       key: scaffoldKey,
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: TransactionList(
-          displayDates: true,
-          reorderable: true,
-          filter: (transaction) => transaction.transactionType != TransactionType.initial,
+      backgroundColor: Colors.transparent,
+      body: Column(children: [
+        TransactionFilterDisplay(),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: TransactionList(
+            displayDates: true,
+            reorderable: true,
+            filter: (transaction) => transaction.transactionType != TransactionType.initial,
+          ),
         ),
-      ),
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {

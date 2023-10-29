@@ -7,11 +7,18 @@ import 'package:flutter_hello_world/widgets/transaction_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TransactionList extends ConsumerWidget {
-  TransactionList({super.key, this.displayDates = true, this.reorderable = false, required this.filter});
+  TransactionList({
+    super.key,
+    required this.filter,
+    this.displayDates = true,
+    this.reorderable = false,
+    this.shrinkwrap = false,
+  });
 
+  final bool Function(Transaction transaction) filter;
   final bool displayDates;
   final bool reorderable;
-  final bool Function(Transaction transaction) filter;
+  final bool shrinkwrap;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 

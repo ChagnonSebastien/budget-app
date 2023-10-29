@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
+import 'package:getwidget/components/card/gf_card.dart';
 
 class TransactionCard extends StatelessWidget {
   const TransactionCard({
@@ -76,13 +77,12 @@ class TransactionCard extends StatelessWidget {
           ));
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: cardContent,
-        ),
+    return GFCard(
+      margin: EdgeInsets.all(3),
+      padding: EdgeInsets.all(5),
+      content: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: cardContent,
       ),
     );
   }
