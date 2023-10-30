@@ -15,6 +15,14 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> cardContent = [
+      Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: Icon(
+          transaction.category?.iconData ?? Icons.attach_money,
+          color: transaction.category?.iconColor ?? Colors.green,
+          size: textSize * 2.8,
+        ),
+      ),
       Expanded(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +43,7 @@ class TransactionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'From: ',
+              transaction.from == null ? "" : 'From: ',
               style: TextStyle(fontSize: textSize),
             ),
             Text(
@@ -46,36 +54,21 @@ class TransactionCard extends StatelessWidget {
         ),
       ),
       Expanded(
-        child: transaction.from == null
-            ? Container()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    transaction.from!.name,
-                    style: TextStyle(fontSize: textSize),
-                  ),
-                  Text(
-                    transaction.to.name,
-                    style: TextStyle(fontSize: textSize),
-                  ),
-                ],
-              ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              transaction.from == null ? "" : transaction.from!.name,
+              style: TextStyle(fontSize: textSize),
+            ),
+            Text(
+              transaction.to.name,
+              style: TextStyle(fontSize: textSize),
+            ),
+          ],
+        ),
       ),
     ];
-
-    if (transaction.category != null) {
-      cardContent.insert(
-          0,
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Icon(
-              transaction.category!.iconData,
-              color: transaction.category!.iconColor,
-              size: textSize * 2.8,
-            ),
-          ));
-    }
 
     return GFCard(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(3))),

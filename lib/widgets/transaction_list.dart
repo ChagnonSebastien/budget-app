@@ -10,13 +10,11 @@ class TransactionList extends ConsumerWidget {
   TransactionList({
     super.key,
     required this.filter,
-    this.displayDates = true,
     this.reorderable = false,
     this.shrinkwrap = false,
   });
 
   final bool Function(Transaction transaction) filter;
-  final bool displayDates;
   final bool reorderable;
   final bool shrinkwrap;
 
@@ -37,23 +35,26 @@ class TransactionList extends ConsumerWidget {
     final filteredTransactions = transactions.value!.where(filter).toList();
 
     for (Transaction t in filteredTransactions.reversed) {
-      bool newDay = lastDay == null || !sameDay(t.date, lastDay);
-      if (newDay) {
-        DateTime currentDate = t.date.trimToDay();
-        items.add(displayDates
-            ? GestureDetector(
-                onLongPress: () {
-                  // Do nothing. Prevents the re-ordering of date labels.
-                },
-                key: Key(t.date.toIso8601String()),
-                child: Text(
-                  currentDate.toDate(),
-                  textAlign: TextAlign.center,
-                ),
-              )
-            : Container(key: Key(t.date.toIso8601String())));
-        itemDates.add(currentDate.add(const Duration(days: 1)));
-        lastDay = currentDate;
+      if (reorderable) {
+        bool newDay = lastDay == null || !sameDay(t.date, lastDay);
+        if (newDay) {
+          DateTime currentDate = t.date.trimToDay();
+          items.add(GestureDetector(
+            onLongPress: () {
+              // Do nothing. Prevents the re-ordering of date labels.
+            },
+            key: Key(t.date.toIso8601String()),
+            child: Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Text(
+                t.date.millisecondsSinceEpoch == 0 ? "Setup" : currentDate.toDate(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ));
+          itemDates.add(currentDate.add(const Duration(days: 1)));
+          lastDay = currentDate;
+        }
       }
 
       items.add(GestureDetector(

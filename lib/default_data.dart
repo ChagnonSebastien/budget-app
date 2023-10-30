@@ -95,7 +95,7 @@ class Currencies {
 
 class Accounts {
   final Account wallet = Account(name: 'Wallet', personal: true);
-  final Account checking = Account(name: 'Checking Account', personal: true);
+  final Account savings = Account(name: 'Wealthsimple', personal: true);
   final Account viateurBagel = Account(name: "Viateur Bagel");
   final Account starbucks = Account(name: "Starbucks");
   final Account randolph = Account(name: "Randolph");
@@ -104,7 +104,7 @@ class Accounts {
   List<Account> asList() {
     return [
       wallet,
-      checking,
+      savings,
       viateurBagel,
       starbucks,
       randolph,
@@ -117,9 +117,21 @@ class Transactions {
   List<Transaction> asList() {
     return [
       Transaction(
-        amount: 15 * 1000 * 100,
+        amount: 440 * 100,
         currency: Defaults.currencies.cad,
-        to: Defaults.accounts.checking,
+        to: Defaults.accounts.wallet,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
+      ),
+      Transaction(
+        amount: 17500 * 100,
+        currency: Defaults.currencies.cad,
+        to: Defaults.accounts.savings,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
+      ),
+      Transaction(
+        amount: 22325,
+        currency: Defaults.currencies.aapl,
+        to: Defaults.accounts.savings,
         date: DateTime.fromMillisecondsSinceEpoch(0),
       ),
       Transaction(
@@ -134,7 +146,7 @@ class Transactions {
       Transaction(
         amount: 14689,
         currency: Defaults.currencies.cad,
-        from: Defaults.accounts.checking,
+        from: Defaults.accounts.savings,
         to: Defaults.accounts.maxi,
         date: DateTime.now().subtract(const Duration(days: 3)),
         category: Defaults.categories.groceries,
@@ -151,7 +163,7 @@ class Transactions {
       Transaction(
         amount: 1020,
         currency: Defaults.currencies.cad,
-        from: Defaults.accounts.checking,
+        from: Defaults.accounts.wallet,
         to: Defaults.accounts.viateurBagel,
         date: DateTime.now(),
         category: Defaults.categories.fastFood,

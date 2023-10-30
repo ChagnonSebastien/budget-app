@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hello_world/models/category.dart';
 import 'package:flutter_hello_world/models/transaction.dart';
+import 'package:flutter_hello_world/models/transaction_filter.dart';
 import 'package:flutter_hello_world/pages/transaction_edit.dart';
 import 'package:flutter_hello_world/pages/transaction_new.dart';
 import 'package:flutter_hello_world/utils.dart';
@@ -20,8 +22,10 @@ class MyTransactions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transactions = ref.watch(transactionsProvider);
+    final categories = ref.watch(categoriesProvider);
+    final transactionsFilter = ref.watch(transactionFilterProvider);
 
-    if (!transactions.hasValue) {
+    if (!transactions.hasValue || !categories.hasValue) {
       return Loading();
     }
 
@@ -72,9 +76,41 @@ class MyTransactions extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(10),
           child: TransactionList(
-            displayDates: true,
             reorderable: true,
-            filter: (transaction) => transaction.transactionType != TransactionType.initial,
+            filter: (transaction) {
+              if (transaction.transactionType == TransactionType.initial) {
+                return false;
+              }
+
+              if (transactionsFilter.source != null &&
+                  (transaction.from == null || transactionsFilter.source != transaction.from!.uid)) {
+                return false;
+              }
+              if (transactionsFilter.destination != null && transactionsFilter.destination != transaction.to.uid) {
+                return false;
+              }
+              if (transactionsFilter.filter != "" &&
+                  !(transaction.note ?? "").toLowerCase().contains(transactionsFilter.filter.toLowerCase()) &&
+                  !(transaction.category?.name ?? "").toLowerCase().contains(transactionsFilter.filter.toLowerCase()) &&
+                  !(transaction.from?.name ?? "").toLowerCase().contains(transactionsFilter.filter.toLowerCase()) &&
+                  !transaction.to.name.toLowerCase().contains(transactionsFilter.filter.toLowerCase())) {
+                return false;
+              }
+
+              if (transactionsFilter.category == rootCategoryUid) {
+                return true;
+              }
+
+              var category = transaction.category!.uid;
+              while (category != rootCategoryUid) {
+                if (category == transactionsFilter.category) {
+                  return true;
+                }
+                category = categories.value![category]!.parent!;
+              }
+
+              return false;
+            },
           ),
         ),
       ]),
