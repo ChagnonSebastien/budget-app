@@ -82,6 +82,16 @@ class MyTransactions extends ConsumerWidget {
                 return false;
               }
 
+              if (transaction.date.millisecondsSinceEpoch <
+                  transactionsFilter.from.trimToDay().millisecondsSinceEpoch) {
+                return false;
+              }
+
+              if (transaction.date.millisecondsSinceEpoch >
+                  transactionsFilter.to.trimToDay().add(Duration(days: 1)).millisecondsSinceEpoch) {
+                return false;
+              }
+
               if (transactionsFilter.source != null &&
                   (transaction.from == null || transactionsFilter.source != transaction.from!.uid)) {
                 return false;

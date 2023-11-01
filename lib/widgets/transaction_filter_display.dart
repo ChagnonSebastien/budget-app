@@ -23,7 +23,7 @@ class TransactionFilterDisplay extends HookConsumerWidget {
     final categories = ref.watch(categoriesProvider);
     final accounts = ref.watch(accountsProvider);
 
-    if (!categories.hasValue || !accounts.hasValue) {
+    if (!categories.hasValue || !accounts.hasValue || !categories.value!.containsKey(rootCategoryUid)) {
       return Loading();
     }
 
